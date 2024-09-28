@@ -8,7 +8,7 @@
 CXX = g++
 CFLAGS = -std=c++20 -Wall -Wextra -pedantic -g
 TARGET = isa-top
-SRCS = main.cpp
+SRCS = main.cpp messages.cpp args.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 all : clean $(TARGET)

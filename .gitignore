@@ -1,34 +1,14 @@
-# ---> C++
-# Prerequisites
-*.d
+# ISA Project 2024
 
-# Compiled Object files
-*.slo
-*.lo
+# file: .gitignore
+# brief: File contains list of files and directories that should be ignored by git.
+# author: Jan Findra (xfindr01)
+
+# Ignore executable
+isa-top
+# Ignore object files
 *.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
+# Ignore zip file
+xfindr01.zip
+# Ignore .vscode directory
+.vscode

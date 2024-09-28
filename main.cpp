@@ -1,15 +1,16 @@
 /**
  * ISA Project 2024
  * 
- * @file
+ * @file main.cpp
  * @brief Main file of the project
  * 
  * @author Jan Findra (xfindr01)
  */
 
-#include <stdio.h>
+#include "main.h"
 
-int main() {
-    printf("Hello world\n");
+int main(int argc, char *argv[]) {
+    args arguments = parseArgs(argc, argv);
+
     return 0;
 }
