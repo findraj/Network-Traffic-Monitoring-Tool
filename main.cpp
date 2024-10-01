@@ -12,5 +12,9 @@
 int main(int argc, char *argv[]) {
     args arguments = parseArgs(argc, argv);
 
+    initScreen();
+    printScreen();
+    closeScreen();
+
     return 0;
 }

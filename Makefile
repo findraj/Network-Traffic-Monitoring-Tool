@@ -8,7 +8,7 @@
 CXX = g++
 CFLAGS = -std=c++20 -Wall -Wextra -pedantic -g
 TARGET = isa-top
-SRCS = main.cpp messages.cpp args.cpp
+SRCS = main.cpp messages.cpp args.cpp screen.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 all : clean $(TARGET)
@@ -18,7 +18,7 @@ clean:
 	rm -f xfindr01.zip
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) -lpcap
+	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) -lpcap -lncurses
 	rm -f $(OBJS)
 
 %.o: %.cpp

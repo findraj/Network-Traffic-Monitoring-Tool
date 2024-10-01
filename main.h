@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "messages.h"
 #include "args.h"
+#include "screen.h"
 
 /**
  * @brief Main function
