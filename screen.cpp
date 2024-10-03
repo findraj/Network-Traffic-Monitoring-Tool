@@ -9,8 +9,6 @@
 
 #include "screen.h"
 
-using namespace std;
-
 void initScreen(){
     initscr();
 }
@@ -28,8 +26,21 @@ void printHeader(){
     mvprintw(1, width * 4.5, "%s", "p/s");
 }
 
+void printLine(int row, connection conn){
+    int width = getmaxx(stdscr) / 5;
+    mvprintw(row, 0, "%s:%s", conn.srcIP.c_str(), conn.srcPort.c_str());
+    mvprintw(row, width, "%s:%s", conn.dstIP.c_str(), conn.dstPort.c_str());
+    mvprintw(row, width * 2, "%s", conn.proto.c_str());
+    mvprintw(row, width * 3, "%d", conn.rxbps);
+    mvprintw(row, width * 3.5, "%d", conn.rxpps);
+    mvprintw(row, width * 4, "%d", conn.txbps);
+    mvprintw(row, width * 4.5, "%d", conn.txpps);
+}
+
 void printScreen(){
     printHeader();
+    connection test = {"147.229.13.210", "443", "147.229.14.76", "61027", "tcp", 130, 62, 10, 1};
+    printLine(2, test);
     refresh();
     getch();
 }

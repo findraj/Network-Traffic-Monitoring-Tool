@@ -10,9 +10,27 @@
 #include <ncurses.h>
 #include <string>
 
+using namespace std;
+
+struct connection
+{
+    string srcIP;
+    string srcPort;
+    string dstIP;
+    string dstPort;
+    string proto;
+    int rxbps;
+    int rxpps;
+    int txbps;
+    int txpps;
+};
+
+
 void initScreen();
 
 void printHeader();
+
+void printLine(int row, connection conn);
 
 void printScreen();
 

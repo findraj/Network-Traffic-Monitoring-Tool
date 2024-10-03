@@ -8,9 +8,10 @@
  */
 
 #include <stdio.h>
+#include <pcap.h>
 #include "messages.h"
 #include "args.h"
-#include "screen.h"
+#include "packetHandler.h"
 
 /**
  * @brief Main function
