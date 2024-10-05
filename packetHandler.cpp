@@ -9,7 +9,51 @@
 
 #include "packetHandler.h"
 
-void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, vector<connection> &connections)
+bool cmp(pair<string, connection> a, pair<string, connection> b)
+{
+    return a.second.rxbps + a.second.txbps > b.second.lastPacket;
+}
+
+float calculateSpeed(int bytes, time_t firstPacket, time_t lastPacket)
+{
+    return bytes / (lastPacket - firstPacket);
+}
+
+void newConnection(map<string, connection> *connections, packetData data)
+{
+    int lastPacket = int(data.time);
+    connection newConnection = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, calculateSpeed(data.size, data.time, lastPacket), 0, calculateSpeed(1, data.time, lastPacket), int(data.time), lastPacket, 0, data.size, 0, 1};
+    connections->insert(pair<string, connection>(data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort, newConnection));
+}
+
+void addConnection(map<string, connection> *connections, packetData data)
+{
+    string keySrcToDst = data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort;
+    string keyDstToSrc = data.dstIP + ":" + data.dstPort + "-" + data.srcIP + ":" + data.srcPort;
+    map<string, connection>::iterator itSrcToDst;
+    map<string, connection>::iterator itDstToSrc;
+    itSrcToDst = connections->find(keySrcToDst);
+    itDstToSrc = connections->find(keyDstToSrc);
+
+    if (itSrcToDst != connections->end()) // if the connection already exists and it is from src to dst
+    {
+        connections->at(keySrcToDst).txBytes += data.size;
+        connections->at(keySrcToDst).txPackets++;
+        connections->at(keySrcToDst).lastPacket = int(data.time);
+    }
+    else if (itDstToSrc != connections->end()) // if the connection already exists and it is from dst to src
+    {
+        connections->at(keyDstToSrc).rxBytes += data.size;
+        connections->at(keyDstToSrc).rxPackets++;
+        connections->at(keyDstToSrc).lastPacket = int(data.time);
+    }
+    else // if the connection does not exist
+    {
+        newConnection(connections, data);
+    }
+}
+
+void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections)
 {
     packetData data;
     data.time = pkthdr->ts.tv_sec;
@@ -55,6 +99,9 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, vecto
         case IPPROTO_ICMP:
             data.proto = "icmp";
             break;
+        case IPPROTO_ICMPV6:
+            data.proto = "icmpv6";
+            break;
         case IPPROTO_IGMP:
             data.proto = "igmp";
             break;
@@ -74,6 +121,6 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, vecto
     }
 
     // test of concept
-    connection test = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, data.size, int(data.time), 0, 0};
-    connections.push_back(test);
+    // connection test = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, data.size, data, 0, 0};
+    addConnection(connections, data);
 }

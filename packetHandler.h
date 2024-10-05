@@ -29,6 +29,14 @@ struct packetData
     int size;
 };
 
+bool cmp(pair<string, connection> a, pair<string, connection> b);
+
+float calculateSpeed(int bytes, time_t firstPacket, time_t lastPacket);
+
+void newConnection(map<string, connection> *connections, packetData data);
+
+void addConnection(map<string, connection> *connections, packetData data);
+
 /**
  * @brief Handle loaded packets
  * 
@@ -36,4 +44,4 @@ struct packetData
  * @param pkthdr packet header
  * @param packet packet
  */
-void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, vector<connection> &connections);
+void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections);

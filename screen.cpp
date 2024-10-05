@@ -9,6 +9,26 @@
 
 #include "screen.h"
 
+string floatToString(float number)
+{
+    char tmp[32];
+
+    if (number > 1000)
+    {
+        snprintf(tmp, sizeof(tmp), "%.1fK", number / 1000);
+    }
+    else if (number > 1000000)
+    {
+        snprintf(tmp, sizeof(tmp), "%.1fM", number / 1000000);
+    }
+    else
+    {
+        snprintf(tmp, sizeof(tmp), "%.1f", number);
+    }
+
+    return string(tmp);
+}
+
 void initScreen(){
     initscr();
 }
@@ -31,20 +51,18 @@ void printLine(int row, connection conn){
     mvprintw(row, 0, "%s:%s", conn.srcIP.c_str(), conn.srcPort.c_str());
     mvprintw(row, width, "%s:%s", conn.dstIP.c_str(), conn.dstPort.c_str());
     mvprintw(row, width * 2, "%s", conn.proto.c_str());
-    mvprintw(row, width * 3, "%d", conn.rxbps);
-    mvprintw(row, width * 3.5, "%d", conn.rxpps);
-    mvprintw(row, width * 4, "%d", conn.txbps);
-    mvprintw(row, width * 4.5, "%d", conn.txpps);
+    mvprintw(row, width * 3, "%s", floatToString(conn.rxbps).c_str());
+    mvprintw(row, width * 3.5, "%s", floatToString(conn.rxpps).c_str());
+    mvprintw(row, width * 4, "%s", floatToString(conn.txbps).c_str());
+    mvprintw(row, width * 4.5, "%s", floatToString(conn.txpps).c_str());
 }
 
-void printScreen(vector<connection> connections){
+void printScreen(map<string, connection> *connections){
     clear();
     printHeader();
     // connection test = {"147.229.13.210", "443", "147.229.14.76", "61027", "tcp", 130, 62, 10, 1};
     // printLine(2, test);
-    for (int i = 0; i < int(connections.size()); i++){
-        printLine(i + 2, connections[i]);
-    }
+    printLine(2, connections->rbegin()->second);
     refresh();
 }
 
