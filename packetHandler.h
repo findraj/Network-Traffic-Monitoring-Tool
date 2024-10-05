@@ -33,7 +33,7 @@ bool cmp(pair<string, connection> a, pair<string, connection> b);
 
 vector<connection> sortConnections(map<string, connection> *connections);
 
-float calculateSpeed(int bytes, time_t firstPacket, time_t lastPacket);
+float calculateSpeed(int number, time_t firstPacket, time_t lastPacket);
 
 void newConnection(map<string, connection> *connections, packetData data);
 

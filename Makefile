@@ -28,4 +28,4 @@ pack: clean
 	zip -r xfindr01.zip .
 
 run: $(TARGET)
-	sudo ./isa-top -i en5
+	./isa-top -i en5

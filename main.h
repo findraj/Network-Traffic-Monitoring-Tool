@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <pcap.h>
+#include <unistd.h>
 #include "messages.h"
 #include "args.h"
 #include "packetHandler.h"

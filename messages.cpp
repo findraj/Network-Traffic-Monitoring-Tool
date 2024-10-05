@@ -18,7 +18,7 @@ void printHelp() {
     << "                p - number of packets per second (packet/s)" << endl
     << "Note: The program might require root privileges to run" << endl;
 }
-
+// TODO: closing properly
 void printError(string message) {
     cerr << "Error: " << message << endl << endl;
     printHelp();
