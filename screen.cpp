@@ -37,12 +37,15 @@ void printLine(int row, connection conn){
     mvprintw(row, width * 4.5, "%d", conn.txpps);
 }
 
-void printScreen(){
+void printScreen(vector<connection> connections){
+    clear();
     printHeader();
-    connection test = {"147.229.13.210", "443", "147.229.14.76", "61027", "tcp", 130, 62, 10, 1};
-    printLine(2, test);
+    // connection test = {"147.229.13.210", "443", "147.229.14.76", "61027", "tcp", 130, 62, 10, 1};
+    // printLine(2, test);
+    for (int i = 0; i < int(connections.size()); i++){
+        printLine(i + 2, connections[i]);
+    }
     refresh();
-    getch();
 }
 
 void closeScreen(){

@@ -9,6 +9,7 @@
 
 #include <ncurses.h>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -32,6 +33,6 @@ void printHeader();
 
 void printLine(int row, connection conn);
 
-void printScreen();
+void printScreen(vector<connection> connections);
 
 void closeScreen();

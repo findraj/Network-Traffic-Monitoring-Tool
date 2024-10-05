@@ -9,6 +9,13 @@
 
 #include "main.h"
 
+vector<connection> connections;
+
+void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet){
+    packetHandler(pkthdr, packet, connections);
+    printScreen(connections);
+}
+
 int main(int argc, char *argv[]) {
     args arguments = parseArgs(argc, argv);
     bpf_u_int32 net;
@@ -31,10 +38,13 @@ int main(int argc, char *argv[]) {
 
     initScreen();
 
-    if (pcap_loop(handle, 0, packetHandler, NULL) == -1) {
-        printError("Cannot start packet capturing: " + string(pcap_geterr(handle)));
+    while(true)
+    {
+        if (pcap_dispatch(handle, 0, pHandler, NULL) == -1) {
+            printError("Cannot start packet capturing: " + string(pcap_geterr(handle)));
+        }
     }
-
+    pcap_close(handle);
     closeScreen();
     return 0;
 }

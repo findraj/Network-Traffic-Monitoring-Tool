@@ -9,17 +9,23 @@
 
 #include <pcap.h>
 #include <string>
+#include <ctime>
+#include <netinet/if_ether.h>
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+#include <netinet/udp.h>
 #include "screen.h"
 
 using namespace std;
 
-struct packet
+struct packetData
 {
     string srcIP;
     string srcPort;
     string dstIP;
     string dstPort;
     string proto;
+    time_t time;
     int size;
 };
 
@@ -30,4 +36,4 @@ struct packet
  * @param pkthdr packet header
  * @param packet packet
  */
-void packetHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet);
+void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, vector<connection> &connections);
