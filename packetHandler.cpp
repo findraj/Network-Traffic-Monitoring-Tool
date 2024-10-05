@@ -11,7 +11,25 @@
 
 bool cmp(pair<string, connection> a, pair<string, connection> b)
 {
-    return a.second.rxbps + a.second.txbps > b.second.lastPacket;
+    return a.second.rxbps + a.second.txbps < b.second.rxbps + b.second.txbps;
+}
+
+vector<connection> sortConnections(map<string, connection> *connections)
+{
+    vector<pair<string, connection>> sortedConnections;
+    for (auto &conn : *connections)
+    {
+        sortedConnections.push_back(conn);
+    }
+    sort(sortedConnections.begin(), sortedConnections.end(), cmp);
+
+    vector<connection> sortedConnectionsVector;
+    for (auto &conn : sortedConnections)
+    {
+        sortedConnectionsVector.push_back(conn.second);
+    }
+
+    return sortedConnectionsVector;
 }
 
 float calculateSpeed(int bytes, time_t firstPacket, time_t lastPacket)

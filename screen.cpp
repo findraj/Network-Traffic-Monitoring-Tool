@@ -57,12 +57,23 @@ void printLine(int row, connection conn){
     mvprintw(row, width * 4.5, "%s", floatToString(conn.txpps).c_str());
 }
 
-void printScreen(map<string, connection> *connections){
+void printScreen(vector<connection> *connections){
     clear();
     printHeader();
-    // connection test = {"147.229.13.210", "443", "147.229.14.76", "61027", "tcp", 130, 62, 10, 1};
-    // printLine(2, test);
-    printLine(2, connections->rbegin()->second);
+    int limit;
+    if (connections->size() < 10)
+    {
+        limit = connections->size();
+    }
+    else
+    {
+        limit = 10;
+    }
+
+    for (int i = 0; i < limit; i++)
+    {
+        printLine(i + 2, connections->at(i));
+    }
     refresh();
 }
 

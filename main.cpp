@@ -10,10 +10,12 @@
 #include "main.h"
 
 map<string, connection> connections;
+vector<connection> sortedConnections;
 
 void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet){
     packetHandler(pkthdr, packet, &connections);
-    printScreen(&connections);
+    sortedConnections = sortConnections(&connections);
+    printScreen(&sortedConnections);
 }
 
 int main(int argc, char *argv[]) {

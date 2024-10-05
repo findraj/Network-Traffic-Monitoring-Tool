@@ -60,6 +60,6 @@ void printHeader();
 
 void printLine(int row, connection conn);
 
-void printScreen(map<string, connection> *connections);
+void printScreen(vector<connection> *connections);
 
 void closeScreen();
