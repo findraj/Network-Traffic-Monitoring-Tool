@@ -14,13 +14,30 @@ bool cmp(pair<string, connection> a, pair<string, connection> b)
     return a.second.rxbps + a.second.txbps > b.second.rxbps + b.second.txbps;
 }
 
-vector<connection> sortConnections(map<string, connection> *connections)
+void refreshSpeeds(vector<pair<string, connection>> &connections, time_t last)
+{
+    for (auto &conn : connections)
+    {
+        if (conn.second.first - last == 0)
+        {
+            last = conn.second.first + 1;
+        }
+        conn.second.rxbps = calculateSpeed(conn.second.rxBytes, conn.second.first, last);
+        conn.second.rxpps = calculateSpeed(conn.second.rxPackets, conn.second.first, last);
+        conn.second.txbps = calculateSpeed(conn.second.txBytes, conn.second.first, last);
+        conn.second.txpps = calculateSpeed(conn.second.txPackets, conn.second.first, last);
+    }
+}
+
+vector<connection> sortConnections(map<string, connection> *connections, time_t last)
 {
     vector<pair<string, connection>> sortedConnections;
     for (auto &conn : *connections)
     {
         sortedConnections.push_back(conn);
     }
+
+    refreshSpeeds(sortedConnections, last);
     sort(sortedConnections.begin(), sortedConnections.end(), cmp);
 
     vector<connection> sortedConnectionsVector;
@@ -32,15 +49,14 @@ vector<connection> sortConnections(map<string, connection> *connections)
     return sortedConnectionsVector;
 }
 
-float calculateSpeed(int number, time_t firstPacket, time_t lastPacket)
+float calculateSpeed(int number, time_t first, time_t last)
 {
-    return number / (lastPacket - firstPacket);
+    return float(number) / float(last - first);
 }
 
 void newConnection(map<string, connection> *connections, packetData data)
 {
-    int lastPacket = int(time(nullptr));
-    connection newConnection = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, calculateSpeed(data.size, data.time, lastPacket), calculateSpeed(1, data.time, lastPacket), int(data.time), lastPacket, 0, data.size, 0, 1};
+    connection newConnection = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, int(data.time), 0, 0, data.size, 0, 1};
     connections->insert(pair<string, connection>(data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort, newConnection));
 }
 
@@ -57,17 +73,13 @@ void addConnection(map<string, connection> *connections, packetData data)
     {
         connections->at(keySrcToDst).txBytes += data.size;
         connections->at(keySrcToDst).txPackets++;
-        connections->at(keySrcToDst).lastPacket = int(data.time);
-        connections->at(keySrcToDst).txpps = calculateSpeed(connections->at(keySrcToDst).txPackets, connections->at(keySrcToDst).firstPacket, connections->at(keySrcToDst).lastPacket);
-        connections->at(keySrcToDst).txbps = calculateSpeed(connections->at(keySrcToDst).txBytes, connections->at(keySrcToDst).firstPacket, connections->at(keySrcToDst).lastPacket);
+        connections->at(keySrcToDst).last = int(data.time);
     }
     else if (itDstToSrc != connections->end()) // if the connection already exists and it is from dst to src
     {
         connections->at(keyDstToSrc).rxBytes += data.size;
         connections->at(keyDstToSrc).rxPackets++;
-        connections->at(keyDstToSrc).lastPacket = int(data.time);
-        connections->at(keyDstToSrc).rxpps = calculateSpeed(connections->at(keyDstToSrc).rxPackets, connections->at(keyDstToSrc).firstPacket, connections->at(keyDstToSrc).lastPacket);
-        connections->at(keyDstToSrc).rxbps = calculateSpeed(connections->at(keyDstToSrc).rxBytes, connections->at(keyDstToSrc).firstPacket, connections->at(keyDstToSrc).lastPacket);
+        connections->at(keyDstToSrc).last = int(data.time);
     }
     else // if the connection does not exist
     {
@@ -75,10 +87,11 @@ void addConnection(map<string, connection> *connections, packetData data)
     }
 }
 
-void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections)
+void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections, time_t *last)
 {
     packetData data;
     data.time = pkthdr->ts.tv_sec;
+    *last = data.time;
 
     data.size = pkthdr->len;
 

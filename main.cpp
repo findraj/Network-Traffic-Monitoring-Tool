@@ -11,10 +11,11 @@
 
 map<string, connection> connections;
 vector<connection> sortedConnections;
+time_t last = time(0);
 
 void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet){
-    packetHandler(pkthdr, packet, &connections);
-    sortedConnections = sortConnections(&connections);
+    packetHandler(pkthdr, packet, &connections, &last);
+    sortedConnections = sortConnections(&connections, last);
     printScreen(&sortedConnections);
 }
 

@@ -31,9 +31,11 @@ struct packetData
 
 bool cmp(pair<string, connection> a, pair<string, connection> b);
 
-vector<connection> sortConnections(map<string, connection> *connections);
+void refreshSpeeds(pair<string, connection> *connections, time_t last);
 
-float calculateSpeed(int number, time_t firstPacket, time_t lastPacket);
+vector<connection> sortConnections(map<string, connection> *connections, time_t last);
+
+float calculateSpeed(int number, time_t first, time_t last);
 
 void newConnection(map<string, connection> *connections, packetData data);
 
@@ -46,4 +48,4 @@ void addConnection(map<string, connection> *connections, packetData data);
  * @param pkthdr packet header
  * @param packet packet
  */
-void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections);
+void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections, time_t *last);
