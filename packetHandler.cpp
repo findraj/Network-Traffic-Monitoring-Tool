@@ -21,12 +21,14 @@ bool cmpPPS(pair<string, connection> a, pair<string, connection> b)
 
 void refreshSpeeds(vector<pair<string, connection>> &connections)
 {
+    timeval now = timeval();
+    gettimeofday(&now, NULL);
     for (auto &conn : connections)
     {
-        conn.second.rxbps = calculateSpeed(conn.second.rxBytes, conn.second.first, conn.second.last);
-        conn.second.rxpps = calculateSpeed(conn.second.rxPackets, conn.second.first, conn.second.last);
-        conn.second.txbps = calculateSpeed(conn.second.txBytes, conn.second.first, conn.second.last);
-        conn.second.txpps = calculateSpeed(conn.second.txPackets, conn.second.first, conn.second.last);
+        conn.second.rxbps = calculateSpeed(conn.second.rxBytes, conn.second.first, now);
+        conn.second.rxpps = calculateSpeed(conn.second.rxPackets, conn.second.first, now);
+        conn.second.txbps = calculateSpeed(conn.second.txBytes, conn.second.first, now);
+        conn.second.txpps = calculateSpeed(conn.second.txPackets, conn.second.first, now);
     }
 }
 
