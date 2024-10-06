@@ -20,6 +20,7 @@ using namespace std;
 
 struct packetData
 {
+    bool ipv4;
     string srcIP;
     string srcPort;
     string dstIP;

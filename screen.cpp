@@ -46,10 +46,38 @@ void printHeader(){
     mvprintw(1, width * 4.5, "%s", "p/s");
 }
 
+void printIPandPort(bool ipv4, string ip, string port, int row, int col)
+{
+    if (port == "")
+    {
+        if (ipv4)
+        {
+            mvprintw(row, col, "%s", ip.c_str());
+        }
+        else
+        {
+            mvprintw(row, col, "[%s]", ip.c_str());
+        }
+    }
+    else
+    {
+        if (ipv4)
+        {
+            mvprintw(row, col, "%s:%s", ip.c_str(), port.c_str());
+        }
+        else
+        {
+            mvprintw(row, col, "[%s]:%s", ip.c_str(), port.c_str());
+        }
+    }
+}
+
 void printLine(int row, connection conn){
     int width = getmaxx(stdscr) / 5;
-    mvprintw(row, 0, "%s:%s", conn.srcIP.c_str(), conn.srcPort.c_str());
-    mvprintw(row, width, "%s:%s", conn.dstIP.c_str(), conn.dstPort.c_str());
+    // mvprintw(row, 0, "%s:%s", conn.srcIP.c_str(), conn.srcPort.c_str());
+    // mvprintw(row, width, "%s:%s", conn.dstIP.c_str(), conn.dstPort.c_str());
+    printIPandPort(conn.ipv4, conn.srcIP, conn.srcPort, row, 0);
+    printIPandPort(conn.ipv4, conn.dstIP, conn.dstPort, row, width);
     mvprintw(row, width * 2, "%s", conn.proto.c_str());
     mvprintw(row, width * 3, "%s", floatToString(conn.rxbps).c_str());
     mvprintw(row, width * 3.5, "%s", floatToString(conn.rxpps).c_str());

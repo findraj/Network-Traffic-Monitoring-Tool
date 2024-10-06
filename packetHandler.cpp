@@ -66,7 +66,7 @@ void newConnection(map<string, connection> *connections, packetData data)
 {
     timeval now = timeval();
     gettimeofday(&now, NULL);
-    connection newConnection = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, data.time, now, 0, data.size, 0, 1};
+    connection newConnection = {data.ipv4, data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, data.time, now, 0, data.size, 0, 1};
     connections->insert(pair<string, connection>(data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort, newConnection));
 }
 
@@ -111,6 +111,7 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
 
     if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) // if the ethernet type is IP(v4)
     {
+        data.ipv4 = true;
         char srcIP4[INET_ADDRSTRLEN];
         char dstIP4[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(ip_header->ip_src), srcIP4, INET_ADDRSTRLEN); // get the source IP
@@ -120,6 +121,7 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
     }
     else if (ntohs(eth_header->ether_type) == ETHERTYPE_IPV6) // if the ethernet type is IP(v6)
     {
+        data.ipv4 = false;
         char srcIP6[INET6_ADDRSTRLEN];
         char dstIP6[INET6_ADDRSTRLEN];
         inet_ntop(AF_INET6, &(ip_header->ip_src), srcIP6, INET6_ADDRSTRLEN); // get the source IP
@@ -129,6 +131,7 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
     }
     else // if the ethernet type is ARP
     {
+        data.ipv4 = true;
         struct ether_arp *arp_header = (struct ether_arp *)(packet + sizeof(struct ether_header)); // get the ARP header
         char srcIP[INET_ADDRSTRLEN];
         char dstIP[INET_ADDRSTRLEN];

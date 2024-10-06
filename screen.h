@@ -35,6 +35,7 @@ using namespace std;
  */
 struct connection
 {
+    bool ipv4;
     string srcIP;
     string srcPort;
     string dstIP;
@@ -55,6 +56,8 @@ struct connection
 string floatToString(float number);
 
 void initScreen();
+
+void printIPandPort(bool ipv4, string ip, string port, int row, int col);
 
 void printHeader();
 
