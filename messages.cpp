@@ -19,8 +19,14 @@ void printHelp() {
     << "Note: The program might require root privileges to run" << endl;
 }
 // TODO: closing properly
-void printError(string message) {
+void printError(string message, bool closeScr, pcap_t *handle) {
     cerr << "Error: " << message << endl << endl;
     printHelp();
+    if (closeScreen) {
+        closeScreen();
+    }
+    if (handle != NULL) {
+        pcap_close(handle);
+    }
     exit(1);
 }

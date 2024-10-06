@@ -9,9 +9,14 @@
 
 #include "packetHandler.h"
 
-bool cmp(pair<string, connection> a, pair<string, connection> b)
+bool cmpBPS(pair<string, connection> a, pair<string, connection> b)
 {
     return a.second.rxbps + a.second.txbps > b.second.rxbps + b.second.txbps;
+}
+
+bool cmpPPS(pair<string, connection> a, pair<string, connection> b)
+{
+    return a.second.rxpps + a.second.txpps > b.second.rxpps + b.second.txpps;
 }
 
 void refreshSpeeds(vector<pair<string, connection>> &connections, time_t last)
@@ -29,7 +34,7 @@ void refreshSpeeds(vector<pair<string, connection>> &connections, time_t last)
     }
 }
 
-vector<connection> sortConnections(map<string, connection> *connections, time_t last)
+vector<connection> sortConnections(map<string, connection> *connections, time_t last, bool bytes)
 {
     vector<pair<string, connection>> sortedConnections;
     for (auto &conn : *connections)
@@ -38,7 +43,14 @@ vector<connection> sortConnections(map<string, connection> *connections, time_t 
     }
 
     refreshSpeeds(sortedConnections, last);
-    sort(sortedConnections.begin(), sortedConnections.end(), cmp);
+    if (bytes)
+    {
+        sort(sortedConnections.begin(), sortedConnections.end(), cmpBPS);
+    }
+    else
+    {
+        sort(sortedConnections.begin(), sortedConnections.end(), cmpPPS);
+    }
 
     vector<connection> sortedConnectionsVector;
     for (auto &conn : sortedConnections)

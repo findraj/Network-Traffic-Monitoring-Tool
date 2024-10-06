@@ -12,7 +12,7 @@
 args parseArgs(int argc, char *argv[]) {
     args arguments;
     if (argc < 3) {
-        printError("Interface not specified");
+        printError("Interface not specified", false, NULL);
     }
     else {
         for (int i = 1; i < argc; i++) {
@@ -23,7 +23,7 @@ args parseArgs(int argc, char *argv[]) {
                     i++;
                 }
                 else {
-                    printError("Interface not specified");
+                    printError("Interface not specified", false, NULL);
                 }
             }
             else if (currentArg == "-s") {
@@ -36,16 +36,16 @@ args parseArgs(int argc, char *argv[]) {
                         arguments.bytes = false;
                     }
                     else {
-                        printError("Unknown argument for this switch");
+                        printError("Unknown argument for this switch", false, NULL);
                     }
                     i++;
                 }
                 else {
-                    printError("Switch not specified");
+                    printError("Switch not specified", false, NULL);
                 }
             }
             else {
-                printError("Unknown argument");
+                printError("Unknown argument", false, NULL);
             }
         }
     }

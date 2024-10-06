@@ -8,11 +8,8 @@
  */
 
 #include <stdio.h>
-#include <pcap.h>
 #include <unistd.h>
-#include "messages.h"
 #include "args.h"
-#include "packetHandler.h"
 
 void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet);
 

@@ -7,7 +7,7 @@
  * @author Jan Findra (xfindr01)
  */
 
-#include "messages.h"
+#include "packetHandler.h"
 
 using namespace std;
 

@@ -14,7 +14,7 @@
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
 #include <netinet/udp.h>
-#include "screen.h"
+#include "messages.h"
 
 using namespace std;
 
@@ -29,11 +29,13 @@ struct packetData
     int size;
 };
 
-bool cmp(pair<string, connection> a, pair<string, connection> b);
+bool cmpBPS(pair<string, connection> a, pair<string, connection> b);
+
+bool cmpPPS(pair<string, connection> a, pair<string, connection> b);
 
 void refreshSpeeds(pair<string, connection> *connections, time_t last);
 
-vector<connection> sortConnections(map<string, connection> *connections, time_t last);
+vector<connection> sortConnections(map<string, connection> *connections, time_t last, bool bytes);
 
 float calculateSpeed(int number, time_t first, time_t last);
 

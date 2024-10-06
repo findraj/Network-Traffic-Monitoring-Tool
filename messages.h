@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <pcap.h>
+#include "screen.h"
 
 using namespace std;
 
@@ -23,4 +25,4 @@ void printHelp();
  * 
  * @param message Error message
  */
-void printError(string message);
+void printError(string message, bool closeScr, pcap_t *handle);
