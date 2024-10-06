@@ -22,7 +22,7 @@ void printHelp() {
 void printError(string message, bool closeScr, pcap_t *handle) {
     cerr << "Error: " << message << endl << endl;
     printHelp();
-    if (closeScreen) {
+    if (closeScr) {
         closeScreen();
     }
     if (handle != NULL) {

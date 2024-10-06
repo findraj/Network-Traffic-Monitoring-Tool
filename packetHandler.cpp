@@ -19,22 +19,18 @@ bool cmpPPS(pair<string, connection> a, pair<string, connection> b)
     return a.second.rxpps + a.second.txpps > b.second.rxpps + b.second.txpps;
 }
 
-void refreshSpeeds(vector<pair<string, connection>> &connections, time_t last)
+void refreshSpeeds(vector<pair<string, connection>> &connections)
 {
     for (auto &conn : connections)
     {
-        if (conn.second.first - last == 0)
-        {
-            last = conn.second.first + 1;
-        }
-        conn.second.rxbps = calculateSpeed(conn.second.rxBytes, conn.second.first, last);
-        conn.second.rxpps = calculateSpeed(conn.second.rxPackets, conn.second.first, last);
-        conn.second.txbps = calculateSpeed(conn.second.txBytes, conn.second.first, last);
-        conn.second.txpps = calculateSpeed(conn.second.txPackets, conn.second.first, last);
+        conn.second.rxbps = calculateSpeed(conn.second.rxBytes, conn.second.first, conn.second.last);
+        conn.second.rxpps = calculateSpeed(conn.second.rxPackets, conn.second.first, conn.second.last);
+        conn.second.txbps = calculateSpeed(conn.second.txBytes, conn.second.first, conn.second.last);
+        conn.second.txpps = calculateSpeed(conn.second.txPackets, conn.second.first, conn.second.last);
     }
 }
 
-vector<connection> sortConnections(map<string, connection> *connections, time_t last, bool bytes)
+vector<connection> sortConnections(map<string, connection> *connections, bool bytes)
 {
     vector<pair<string, connection>> sortedConnections;
     for (auto &conn : *connections)
@@ -42,7 +38,7 @@ vector<connection> sortConnections(map<string, connection> *connections, time_t 
         sortedConnections.push_back(conn);
     }
 
-    refreshSpeeds(sortedConnections, last);
+    refreshSpeeds(sortedConnections);
     if (bytes)
     {
         sort(sortedConnections.begin(), sortedConnections.end(), cmpBPS);
@@ -61,14 +57,16 @@ vector<connection> sortConnections(map<string, connection> *connections, time_t 
     return sortedConnectionsVector;
 }
 
-float calculateSpeed(int number, time_t first, time_t last)
+float calculateSpeed(int number, timeval first, timeval last)
 {
-    return float(number) / float(last - first);
+    return number / (last.tv_sec - first.tv_sec + (last.tv_usec - first.tv_usec) / 1000000.0);
 }
 
 void newConnection(map<string, connection> *connections, packetData data)
 {
-    connection newConnection = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, int(data.time), 0, 0, data.size, 0, 1};
+    timeval now = timeval();
+    gettimeofday(&now, NULL);
+    connection newConnection = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, data.time, now, 0, data.size, 0, 1};
     connections->insert(pair<string, connection>(data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort, newConnection));
 }
 
@@ -85,13 +83,13 @@ void addConnection(map<string, connection> *connections, packetData data)
     {
         connections->at(keySrcToDst).txBytes += data.size;
         connections->at(keySrcToDst).txPackets++;
-        connections->at(keySrcToDst).last = int(data.time);
+        connections->at(keySrcToDst).last = data.time;
     }
     else if (itDstToSrc != connections->end()) // if the connection already exists and it is from dst to src
     {
         connections->at(keyDstToSrc).rxBytes += data.size;
         connections->at(keyDstToSrc).rxPackets++;
-        connections->at(keyDstToSrc).last = int(data.time);
+        connections->at(keyDstToSrc).last = data.time;
     }
     else // if the connection does not exist
     {
@@ -99,11 +97,10 @@ void addConnection(map<string, connection> *connections, packetData data)
     }
 }
 
-void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections, time_t *last)
+void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections)
 {
     packetData data;
-    data.time = pkthdr->ts.tv_sec;
-    *last = data.time;
+    data.time = pkthdr->ts;
 
     data.size = pkthdr->len;
 

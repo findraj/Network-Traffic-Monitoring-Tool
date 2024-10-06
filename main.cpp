@@ -11,12 +11,11 @@
 
 map<string, connection> connections;
 vector<connection> sortedConnections;
-time_t last = time(0);
 args arguments;
 
 void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet){
-    packetHandler(pkthdr, packet, &connections, &last);
-    sortedConnections = sortConnections(&connections, last, arguments.bytes);
+    packetHandler(pkthdr, packet, &connections);
+    sortedConnections = sortConnections(&connections, arguments.bytes);
     printScreen(&sortedConnections);
 }
 
@@ -45,7 +44,8 @@ int main(int argc, char *argv[]) {
     while(true)
     {
         if (pcap_dispatch(handle, 0, pHandler, NULL) == -1) {
-            printError("Cannot start packet capturing: " + string(pcap_geterr(handle)), true, NULL);
+            printError("Cannot start packet capturing: " + string(pcap_geterr(handle)), true, NULL
+            );
         }
     }
     pcap_close(handle);

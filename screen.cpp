@@ -13,13 +13,13 @@ string floatToString(float number)
 {
     char tmp[32];
 
-    if (number > 1000)
-    {
-        snprintf(tmp, sizeof(tmp), "%.1fK", number / 1000);
-    }
-    else if (number > 1000000)
+    if (number >= 1000000)
     {
         snprintf(tmp, sizeof(tmp), "%.1fM", number / 1000000);
+    }
+    else if (number >= 1000)
+    {
+        snprintf(tmp, sizeof(tmp), "%.1fK", number / 1000);
     }
     else
     {

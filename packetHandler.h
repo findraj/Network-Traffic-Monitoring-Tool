@@ -25,7 +25,7 @@ struct packetData
     string dstIP;
     string dstPort;
     string proto;
-    time_t time;
+    timeval time;
     int size;
 };
 
@@ -33,11 +33,11 @@ bool cmpBPS(pair<string, connection> a, pair<string, connection> b);
 
 bool cmpPPS(pair<string, connection> a, pair<string, connection> b);
 
-void refreshSpeeds(pair<string, connection> *connections, time_t last);
+void refreshSpeeds(pair<string, connection> *connections);
 
-vector<connection> sortConnections(map<string, connection> *connections, time_t last, bool bytes);
+vector<connection> sortConnections(map<string, connection> *connections, bool bytes);
 
-float calculateSpeed(int number, time_t first, time_t last);
+float calculateSpeed(int number, timeval first, timeval last);
 
 void newConnection(map<string, connection> *connections, packetData data);
 
@@ -50,4 +50,4 @@ void addConnection(map<string, connection> *connections, packetData data);
  * @param pkthdr packet header
  * @param packet packet
  */
-void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections, time_t *last);
+void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections);

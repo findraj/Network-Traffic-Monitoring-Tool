@@ -44,8 +44,8 @@ struct connection
     float rxpps;
     float txbps;
     float txpps;
-    time_t first;
-    time_t last;
+    timeval first;
+    timeval last;
     int rxBytes;
     int txBytes;
     int rxPackets;
