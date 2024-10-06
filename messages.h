@@ -24,5 +24,7 @@ void printHelp();
  * @brief Print error message
  * 
  * @param message Error message
+ * @param closeScr True if the screen should be closed
+ * @param handle Handle to pcap, NULL if not needed
  */
 void printError(string message, bool closeScr, pcap_t *handle);

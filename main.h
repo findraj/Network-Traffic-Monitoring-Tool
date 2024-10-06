@@ -11,6 +11,13 @@
 #include <unistd.h>
 #include "args.h"
 
+/**
+ * @brief Function to call other functions necessary for packet handling
+ * 
+ * @param userData User data
+ * @param pkthdr Packet header
+ * @param packet Packet
+ */
 void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet);
 
 /**

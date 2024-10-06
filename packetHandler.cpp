@@ -11,19 +11,21 @@
 
 bool cmpBPS(pair<string, connection> a, pair<string, connection> b)
 {
-    return a.second.rxbps + a.second.txbps > b.second.rxbps + b.second.txbps;
+    return a.second.rxbps + a.second.txbps > b.second.rxbps + b.second.txbps; // sum speeds and compare
 }
 
 bool cmpPPS(pair<string, connection> a, pair<string, connection> b)
 {
-    return a.second.rxpps + a.second.txpps > b.second.rxpps + b.second.txpps;
+    return a.second.rxpps + a.second.txpps > b.second.rxpps + b.second.txpps; // sum speeds and compare
 }
 
 void refreshSpeeds(vector<pair<string, connection>> &connections)
 {
+    // get the current time
     timeval now = timeval();
     gettimeofday(&now, NULL);
-    for (auto &conn : connections)
+
+    for (auto &conn : connections) // go through all connections and calculate the new speeds
     {
         conn.second.rxbps = calculateSpeed(conn.second.rxBytes, conn.second.first, now);
         conn.second.rxpps = calculateSpeed(conn.second.rxPackets, conn.second.first, now);
@@ -34,24 +36,27 @@ void refreshSpeeds(vector<pair<string, connection>> &connections)
 
 vector<connection> sortConnections(map<string, connection> *connections, bool bytes)
 {
-    vector<pair<string, connection>> sortedConnections;
-    for (auto &conn : *connections)
+    vector<pair<string, connection>> sortedConnections; // temporary vector for sorting
+
+    for (auto &conn : *connections) // extract the map to the vector
     {
         sortedConnections.push_back(conn);
     }
 
-    refreshSpeeds(sortedConnections);
-    if (bytes)
+    refreshSpeeds(sortedConnections); // refresh the speeds
+
+    if (bytes) // sort by bytes
     {
         sort(sortedConnections.begin(), sortedConnections.end(), cmpBPS);
     }
-    else
+    else // sort by packets
     {
         sort(sortedConnections.begin(), sortedConnections.end(), cmpPPS);
     }
 
-    vector<connection> sortedConnectionsVector;
-    for (auto &conn : sortedConnections)
+    vector<connection> sortedConnectionsVector; // vector of 10 most active connections
+
+    for (auto &conn : sortedConnections) // extract the 10 most active connections
     {
         sortedConnectionsVector.push_back(conn.second);
     }
@@ -61,23 +66,29 @@ vector<connection> sortConnections(map<string, connection> *connections, bool by
 
 float calculateSpeed(int number, timeval first, timeval last)
 {
+    // number[bytes/packets] / (last[sec] - first[sec] + (last[microsec] - first[microsec]) / 1000000.0)
     return number / (last.tv_sec - first.tv_sec + (last.tv_usec - first.tv_usec) / 1000000.0);
 }
 
 void newConnection(map<string, connection> *connections, packetData data)
 {
+    // get the current time
     timeval now = timeval();
     gettimeofday(&now, NULL);
-    connection newConnection = {data.ipv4, data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, data.time, now, 0, data.size, 0, 1};
+    connection newConnection = {data.ipv4, data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, data.time, now, 0, data.size, 0, 1}; // create new connection
+    // insert the new connection to the map, key is made from source and destination IP and port
     connections->insert(pair<string, connection>(data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort, newConnection));
 }
 
 void addConnection(map<string, connection> *connections, packetData data)
 {
-    string keySrcToDst = data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort;
-    string keyDstToSrc = data.dstIP + ":" + data.dstPort + "-" + data.srcIP + ":" + data.srcPort;
+    // create two keys for the map to check if the connection already exists even if the source and destination are switched
+    string keySrcToDst = data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort; // key from source to destination
+    string keyDstToSrc = data.dstIP + ":" + data.dstPort + "-" + data.srcIP + ":" + data.srcPort; // key from destination to source
+    // two iterators for the map
     map<string, connection>::iterator itSrcToDst;
     map<string, connection>::iterator itDstToSrc;
+    // find the connection in the map
     itSrcToDst = connections->find(keySrcToDst);
     itDstToSrc = connections->find(keyDstToSrc);
 
@@ -101,10 +112,9 @@ void addConnection(map<string, connection> *connections, packetData data)
 
 void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections)
 {
-    packetData data;
-    data.time = pkthdr->ts;
-
-    data.size = pkthdr->len;
+    packetData data; // structure for packet data
+    data.time = pkthdr->ts; // get the time of the packet
+    data.size = pkthdr->len; // get the size of the packet in bytes
 
     const struct ether_header *eth_header = (const struct ether_header *)packet; // get the ethernet header
     const struct ip *ip_header = (const struct ip *)(packet + sizeof(struct ether_header)); // get the IP header
@@ -118,6 +128,7 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
         char dstIP4[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(ip_header->ip_src), srcIP4, INET_ADDRSTRLEN); // get the source IP
         inet_ntop(AF_INET, &(ip_header->ip_dst), dstIP4, INET_ADDRSTRLEN); // get the destination IP
+        // convert the IPs to strings and save them to the structure
         data.srcIP = string(srcIP4);
         data.dstIP = string(dstIP4);
     }
@@ -128,6 +139,7 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
         char dstIP6[INET6_ADDRSTRLEN];
         inet_ntop(AF_INET6, &(ip_header->ip_src), srcIP6, INET6_ADDRSTRLEN); // get the source IP
         inet_ntop(AF_INET6, &(ip_header->ip_dst), dstIP6, INET6_ADDRSTRLEN); // get the destination IP
+        // convert the IPs to strings and save them to the structure
         data.srcIP = string(srcIP6);
         data.dstIP = string(dstIP6);
     }
@@ -139,6 +151,7 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
         char dstIP[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, arp_header->arp_spa, srcIP, INET_ADDRSTRLEN); // get the source IP
         inet_ntop(AF_INET, arp_header->arp_tpa, dstIP, INET_ADDRSTRLEN); // get the destination IP
+        // convert the IPs to strings and save them to the structure
         data.srcIP = string(srcIP);
         data.dstIP = string(dstIP);
     }
@@ -169,5 +182,5 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
             break;
     }
 
-    addConnection(connections, data);
+    addConnection(connections, data); // add the connection to the map
 }

@@ -9,45 +9,61 @@
 
 #include "args.h"
 
-args parseArgs(int argc, char *argv[]) {
+args parseArgs(int argc, char *argv[])
+{
     args arguments;
-    if (argc < 3) {
+
+    if (argc < 3) // if there are not enough arguments
+    {
         printError("Interface not specified", false, NULL);
     }
-    else {
-        for (int i = 1; i < argc; i++) {
-            string currentArg = argv[i];
-            if (currentArg == "-i") {
-                if (i + 1 < argc) {
-                    arguments.interface = argv[i + 1];
+    else // if there are enough arguments
+    {
+        for (int i = 1; i < argc; i++) // go through all arguments
+        {
+            string currentArg = argv[i]; // get the current argument
+            if (currentArg == "-i")
+            {
+                if (i + 1 < argc) // check if there is another argument which is the interface
+                {
+                    arguments.interface = argv[i + 1]; // set the interface
                     i++;
                 }
-                else {
+                else // interface not specified
+                {
                     printError("Interface not specified", false, NULL);
                 }
             }
-            else if (currentArg == "-s") {
-                if (i + 1 < argc) {
-                    currentArg = argv[i + 1];
-                    if (currentArg == "b") {
+            else if (currentArg == "-s")
+            {
+                if (i + 1 < argc) // check if there is another argument which is the switch
+                {
+                    currentArg = argv[i + 1]; // get the switch
+                    if (currentArg == "b") // if the switch is b set bytes to true
+                    {
                         arguments.bytes = true;
                     }
-                    else if (currentArg == "p") {
+                    else if (currentArg == "p") // if the switch is p set bytes to false
+                    {
                         arguments.bytes = false;
                     }
-                    else {
+                    else
+                    {
                         printError("Unknown argument for this switch", false, NULL);
                     }
                     i++;
                 }
-                else {
+                else // switch not specified
+                {
                     printError("Switch not specified", false, NULL);
                 }
             }
-            else {
+            else // unknown argument
+            {
                 printError("Unknown argument", false, NULL);
             }
         }
     }
+    
     return arguments;
 }

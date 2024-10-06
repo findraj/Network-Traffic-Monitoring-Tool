@@ -23,4 +23,11 @@ struct args
     bool bytes = true;
 };
 
+/**
+ * @brief Parse arguments
+ * 
+ * @param argc Number of arguments
+ * @param argv Arguments in array
+ * @return args Arguments structure
+ */
 args parseArgs(int argc, char *argv[]);

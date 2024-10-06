@@ -9,7 +9,8 @@
 
 #include "messages.h"
 
-void printHelp() {
+void printHelp()
+{
     cout << "Usage: ./isa-top -i interface [-s b|p]" << endl
     << "Options:" << endl
     << "  -i interface  Interface to listen on" << endl
@@ -18,15 +19,18 @@ void printHelp() {
     << "                p - number of packets per second (packet/s)" << endl
     << "Note: The program might require root privileges to run" << endl;
 }
-// TODO: closing properly
-void printError(string message, bool closeScr, pcap_t *handle) {
-    cerr << "Error: " << message << endl << endl;
-    printHelp();
-    if (closeScr) {
+
+void printError(string message, bool closeScr, pcap_t *handle)
+{
+    cerr << "Error: " << message << endl << endl; // print the error message
+    printHelp(); // print the help message
+    if (closeScr) // if the screen should be closed
+    {
         closeScreen();
     }
-    if (handle != NULL) {
+    if (handle != NULL) // if the handle is not NULL
+    {
         pcap_close(handle);
     }
-    exit(1);
+    exit(1); // exit the program with error code
 }

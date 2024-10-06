@@ -11,13 +11,13 @@
 
 string floatToString(float number)
 {
-    char tmp[32];
+    char tmp[32]; // buffer for the number
 
-    if (number >= 1000000)
+    if (number >= 1000000) // if the number is in millions
     {
         snprintf(tmp, sizeof(tmp), "%.1fM", number / 1000000);
     }
-    else if (number >= 1000)
+    else if (number >= 1000) // if the number is in thousands
     {
         snprintf(tmp, sizeof(tmp), "%.1fK", number / 1000);
     }
@@ -29,67 +29,70 @@ string floatToString(float number)
     return string(tmp);
 }
 
-void initScreen(){
+void initScreen()
+{
     initscr();
 }
 
-void printHeader(){
-    int width = getmaxx(stdscr) / 5;
-    mvprintw(0, 0, "%s", "Src IP:port");
-    mvprintw(0, width, "%s", "Dst IP:port");
-    mvprintw(0, width * 2, "%s", "Proto");
-    mvprintw(0, width * 3, "%s", "Rx");
-    mvprintw(0, width * 4, "%s", "Tx");
-    mvprintw(1, width * 3, "%s", "b/s");
-    mvprintw(1, width * 3.5, "%s", "p/s");
-    mvprintw(1, width * 4, "%s", "b/s");
-    mvprintw(1, width * 4.5, "%s", "p/s");
+void printHeader()
+{
+    int width = getmaxx(stdscr) / 5; // width of one column
+    mvprintw(0, 0, "%s", "Src IP:port"); // source IP and port
+    mvprintw(0, width, "%s", "Dst IP:port"); // destination IP and port
+    mvprintw(0, width * 2, "%s", "Proto"); // protocol
+    mvprintw(0, width * 3, "%s", "Rx"); // received
+    mvprintw(0, width * 4, "%s", "Tx"); // transmitted
+    mvprintw(1, width * 3, "%s", "b/s"); // bytes per second
+    mvprintw(1, width * 3.5, "%s", "p/s"); // packets per second
+    mvprintw(1, width * 4, "%s", "b/s"); // bytes per second
+    mvprintw(1, width * 4.5, "%s", "p/s"); // packets per second
 }
 
 void printIPandPort(bool ipv4, string ip, string port, int row, int col)
 {
-    if (port == "")
+    if (port == "") // if the port is not specified
     {
-        if (ipv4)
+        if (ipv4) // if the IP is IPv4
         {
             mvprintw(row, col, "%s", ip.c_str());
         }
-        else
+        else // if the IP is IPv6
         {
             mvprintw(row, col, "[%s]", ip.c_str());
         }
     }
-    else
+    else // if the port is specified
     {
-        if (ipv4)
+        if (ipv4) // if the IP is IPv4
         {
             mvprintw(row, col, "%s:%s", ip.c_str(), port.c_str());
         }
-        else
+        else // if the IP is IPv6
         {
             mvprintw(row, col, "[%s]:%s", ip.c_str(), port.c_str());
         }
     }
 }
 
-void printLine(int row, connection conn){
-    int width = getmaxx(stdscr) / 5;
-    // mvprintw(row, 0, "%s:%s", conn.srcIP.c_str(), conn.srcPort.c_str());
-    // mvprintw(row, width, "%s:%s", conn.dstIP.c_str(), conn.dstPort.c_str());
-    printIPandPort(conn.ipv4, conn.srcIP, conn.srcPort, row, 0);
-    printIPandPort(conn.ipv4, conn.dstIP, conn.dstPort, row, width);
-    mvprintw(row, width * 2, "%s", conn.proto.c_str());
-    mvprintw(row, width * 3, "%s", floatToString(conn.rxbps).c_str());
-    mvprintw(row, width * 3.5, "%s", floatToString(conn.rxpps).c_str());
-    mvprintw(row, width * 4, "%s", floatToString(conn.txbps).c_str());
-    mvprintw(row, width * 4.5, "%s", floatToString(conn.txpps).c_str());
+void printLine(int row, connection conn)
+{
+    int width = getmaxx(stdscr) / 5; // width of one column
+    printIPandPort(conn.ipv4, conn.srcIP, conn.srcPort, row, 0); // source IP and port
+    printIPandPort(conn.ipv4, conn.dstIP, conn.dstPort, row, width); // destination IP and port
+    mvprintw(row, width * 2, "%s", conn.proto.c_str()); // protocol
+    mvprintw(row, width * 3, "%s", floatToString(conn.rxbps).c_str()); // received bytes per second
+    mvprintw(row, width * 3.5, "%s", floatToString(conn.rxpps).c_str()); // received packets per second
+    mvprintw(row, width * 4, "%s", floatToString(conn.txbps).c_str()); // transmitted bytes per second
+    mvprintw(row, width * 4.5, "%s", floatToString(conn.txpps).c_str()); // transmitted packets per second
 }
 
-void printScreen(vector<connection> *connections){
-    clear();
+void printScreen(vector<connection> *connections)
+{
+    clear(); // clear the screen to remove old data
     printHeader();
-    int limit;
-    if (connections->size() < 10)
+    int limit; // limit of connections to print
+
+    if (connections->size() < 10) // if there are less than 10 connections to prevent segmentation fault
     {
         limit = connections->size();
     }
@@ -98,13 +101,15 @@ void printScreen(vector<connection> *connections){
         limit = 10;
     }
 
-    for (int i = 0; i < limit; i++)
+    for (int i = 0; i < limit; i++) // print the connections
     {
         printLine(i + 2, connections->at(i));
     }
+
     refresh();
 }
 
-void closeScreen(){
+void closeScreen()
+{
     endwin();
 }
