@@ -164,7 +164,5 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
             break;
     }
 
-    // test of concept
-    // connection test = {data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, data.size, data, 0, 0};
     addConnection(connections, data);
 }

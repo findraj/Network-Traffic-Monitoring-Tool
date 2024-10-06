@@ -17,6 +17,7 @@ void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* 
     packetHandler(pkthdr, packet, &connections);
     sortedConnections = sortConnections(&connections, arguments.bytes);
     printScreen(&sortedConnections);
+    (void)userData;
 }
 
 int main(int argc, char *argv[]) {
@@ -41,13 +42,10 @@ int main(int argc, char *argv[]) {
 
     initScreen();
 
-    while(true)
-    {
-        if (pcap_dispatch(handle, 0, pHandler, NULL) == -1) {
-            printError("Cannot start packet capturing: " + string(pcap_geterr(handle)), true, NULL
-            );
-        }
+    if (pcap_loop(handle, 0, pHandler, NULL) == -1) {
+        printError("Cannot start packet capturing: " + string(pcap_geterr(handle)), true, NULL);
     }
+
     pcap_close(handle);
     closeScreen();
     return 0;
