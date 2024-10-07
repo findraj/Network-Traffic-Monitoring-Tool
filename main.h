@@ -9,7 +9,21 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <thread>
 #include "args.h"
+
+/**
+ * @brief Function to handle signals, especially SIGINT
+ * 
+ * @param signum Signal number
+ */
+void signalHandler(int signum);
+
+/**
+ * @brief Function to handle screen printing and preparing data for printing
+ * 
+ */
+void screenHandler();
 
 /**
  * @brief Function to call other functions necessary for packet handling

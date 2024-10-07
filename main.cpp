@@ -13,12 +13,24 @@ map<string, connection> connections; // map of connections
 vector<connection> sortedConnections; // vector of 10 most active connections
 args arguments;
 pcap_t *handle;
+bool running = true;
 
 void signalHandler(int signum)
 {
     if (signum == SIGINT)
     {
         pcap_breakloop(handle); // break the packet capturing loop
+        running = false; // set the running flag to false
+    }
+}
+
+void screenHandler()
+{
+    while (running)
+    {
+        sortedConnections = sortConnections(&connections, arguments.bytes); // sort connections and return 10 most active
+        printScreen(&sortedConnections);
+        this_thread::sleep_for(chrono::seconds(1)); // sleep for 1 second
     }
 }
 
@@ -26,8 +38,6 @@ void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* 
 {
     signal(SIGINT, signalHandler); // set the signal handler
     packetHandler(pkthdr, packet, &connections); // handle the packet and update map of connections
-    sortedConnections = sortConnections(&connections, arguments.bytes); // sort connections and return 10 most active
-    printScreen(&sortedConnections);
     (void)userData; // suppress unused variable warning
 }
 
@@ -57,6 +67,8 @@ int main(int argc, char *argv[])
     }
 
     initScreen(); // initialize the screen
+
+    thread screenThread(screenHandler); // start the screen thread
 
     // start packet capturing
     if (pcap_loop(handle, 0, pHandler, NULL) == -1) // check if the packet capturing started
