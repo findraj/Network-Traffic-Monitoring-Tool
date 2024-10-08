@@ -65,7 +65,7 @@ bool cmpPPS(pair<string, connection> a, pair<string, connection> b);
  * 
  * @param connections Connections to refresh
  */
-void refreshSpeeds(pair<string, connection> *connections);
+void refreshSpeeds(map<string, connection> *connections);
 
 /**
  * @brief Function to sort connections and return 10 most active in vector
@@ -75,16 +75,6 @@ void refreshSpeeds(pair<string, connection> *connections);
  * @return Sorted connections
  */
 vector<connection> sortConnections(map<string, connection> *connections, bool bytes);
-
-/**
- * @brief Function to calculate speed
- * 
- * @param number Number of bytes/packets
- * @param first Time of the first packet
- * @param last Time of the last packet/now
- * @return Speed
- */
-float calculateSpeed(int number, timeval first, timeval last);
 
 /**
  * @brief Function to create new connection

@@ -26,8 +26,7 @@ using namespace std;
  * @param rxpps Received packets per second
  * @param txbps Transmitted bytes per second
  * @param txpps Transmitted packets per second
- * @param firstPacket Time of the first packet
- * @param lastPacket Time of the last packet
+ * @param timestamp Time of the last packet
  * @param rxBytes Received bytes
  * @param txBytes Transmitted bytes
  * @param rxPackets Received packets
@@ -45,8 +44,7 @@ struct connection
     float rxpps;
     float txbps;
     float txpps;
-    timeval first;
-    timeval last;
+    timeval timestamp;
     int rxBytes;
     int txBytes;
     int rxPackets;
