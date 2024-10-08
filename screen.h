@@ -17,6 +17,7 @@ using namespace std;
 /**
  * @brief Connection structure
  * 
+ * @param ipv4 True if IPv4, false if IPv6
  * @param srcIP Source IP address
  * @param srcPort Source port
  * @param dstIP Destination IP address
@@ -26,11 +27,11 @@ using namespace std;
  * @param rxpps Received packets per second
  * @param txbps Transmitted bytes per second
  * @param txpps Transmitted packets per second
- * @param timestamp Time of the last packet
- * @param rxBytes Received bytes
- * @param txBytes Transmitted bytes
- * @param rxPackets Received packets
- * @param txPackets Transmitted packets
+ * @param timestamp Vector of timestamps
+ * @param rxBytes Vector of received bytes
+ * @param txBytes Vector of transmitted bytes
+ * @param rxPackets Vector of received packets
+ * @param txPackets Vector of transmitted packets
  */
 struct connection
 {
@@ -65,7 +66,7 @@ string floatToString(float number);
 void initScreen();
 
 /**
- * @brief Function to print IP and port according to the task
+ * @brief Function to print IP and port properly
  * 
  * @param ipv4 True if IPv4, false if IPv6
  * @param ip IP address

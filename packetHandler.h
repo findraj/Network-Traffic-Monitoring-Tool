@@ -27,7 +27,7 @@ using namespace std;
  * @param dstIP Destination IP address
  * @param dstPort Destination port
  * @param proto Protocol
- * @param time Time of the packet handling
+ * @param time Time of the packet arrival
  * @param size Size of the packet in bytes
  */
 struct packetData
@@ -67,6 +67,7 @@ void computeSpeeds(map<string, connection> *connections, int freq);
  * 
  * @param connections Connections to sort
  * @param bytes True if sorting by bytes, false if sorting by packets
+ * @param freq Time between updates
  * @return Sorted connections
  */
 vector<connection> sortConnections(map<string, connection> *connections, bool bytes, int freq);
@@ -93,5 +94,6 @@ void addConnection(map<string, connection> *connections, packetData data);
  * @param userData user data
  * @param pkthdr packet header
  * @param packet packet
+ * @param connections map of connections
  */
 void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections);

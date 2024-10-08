@@ -17,6 +17,7 @@ using namespace std;
  * 
  * @param interface Interface name
  * @param bytes True if bytes, false if packets
+ * @param freq Frequency of updates, time between updates
  */
 struct args
 {
@@ -25,6 +26,12 @@ struct args
     int freq = 1;
 };
 
+/**
+ * @brief Function to check if the string is a number
+ * 
+ * @param str String to check
+ * @return True if the string is a number
+ */
 bool isNumber(string str);
 
 /**

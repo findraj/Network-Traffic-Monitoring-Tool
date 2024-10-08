@@ -30,7 +30,7 @@ void screenHandler()
     {
         sortedConnections = sortConnections(&connections, arguments.bytes, arguments.freq); // sort connections and return 10 most active
         printScreen(&sortedConnections);
-        this_thread::sleep_for(chrono::seconds(arguments.freq));
+        this_thread::sleep_for(chrono::seconds(arguments.freq)); // sleep for the time set by frequency argument
     }
 }
 

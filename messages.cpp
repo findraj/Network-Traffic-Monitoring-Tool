@@ -17,6 +17,7 @@ void printHelp()
     << "  -s b|p        Type of speed to be ordered by" << endl
     << "                b - number of bytes per second (B/s)" << endl
     << "                p - number of packets per second (packet/s)" << endl
+    <<"                 -t seconds    Time in seconds between updates" << endl
     << "Note: The program might require root privileges to run" << endl;
 }
 

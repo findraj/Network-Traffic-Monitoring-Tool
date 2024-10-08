@@ -13,7 +13,8 @@ bool isNumber(string str)
 {
     for (char c : str) // go through all characters
     {
-        if (!isdigit(c)) // if the character is not a digit
+        // if the character is not a digit return false
+        if (!isdigit(c))
         {
             return false;
         }

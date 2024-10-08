@@ -25,26 +25,30 @@ void computeSpeeds(map<string, connection> &connections, int freq)
     timeval now = timeval();
     gettimeofday(&now, NULL);
 
-    for (auto &conn : connections) // go through all connections and calculate the new speeds
+    for (auto &conn : connections) // go through all connections and calculate the speeds
     {
+        // set the speeds to 0
         conn.second.rxbps = 0;
         conn.second.txbps = 0;
         conn.second.rxpps = 0;
         conn.second.txpps = 0;
+        // temporary vectors for new values
         vector<timeval> newTimestamp;
         vector<int> newRxBytes;
         vector<int> newTxBytes;
         vector<int> newRxPackets;
         vector<int> newTxPackets;
 
-        for (int i = 0; i < int(conn.second.timestamp.size()); i++) // go through all packets of the connection
+        for (int i = 0; i < int(conn.second.timestamp.size()); i++) // go through all packet records of the connection
         {
-            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= float(freq)) // if the packet is from the last second
+            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= float(freq)) // if the packet has been received in the recent time period
             {
+                // add the stored values to the speeds
                 conn.second.rxbps += conn.second.rxBytes[i];
                 conn.second.txbps += conn.second.txBytes[i];
                 conn.second.rxpps += conn.second.rxPackets[i];
                 conn.second.txpps += conn.second.txPackets[i];
+                // store the valid values for future use
                 newTimestamp.push_back(conn.second.timestamp[i]);
                 newRxBytes.push_back(conn.second.rxBytes[i]);
                 newTxBytes.push_back(conn.second.txBytes[i]);
@@ -52,12 +56,12 @@ void computeSpeeds(map<string, connection> &connections, int freq)
                 newTxPackets.push_back(conn.second.txPackets[i]);
             }
         }
-
-        conn.second.rxbps = conn.second.rxbps * 8 / freq;
-        conn.second.txbps = conn.second.txbps * 8 / freq;
+        // calculate the speeds
+        conn.second.rxbps = conn.second.rxbps * 8 / freq; // convert to bits per second
+        conn.second.txbps = conn.second.txbps * 8 / freq; // convert to bits per second
         conn.second.rxpps = conn.second.rxpps / freq;
         conn.second.txpps = conn.second.txpps / freq;
-
+        // replace the old values with the new ones
         conn.second.timestamp = newTimestamp;
         conn.second.rxBytes = newRxBytes;
         conn.second.txBytes = newTxBytes;
@@ -68,7 +72,7 @@ void computeSpeeds(map<string, connection> &connections, int freq)
 
 vector<connection> sortConnections(map<string, connection> *connections, bool bytes, int freq)
 {
-    computeSpeeds(*connections, freq); // refresh the speeds
+    computeSpeeds(*connections, freq);
     vector<pair<string, connection>> sortedConnections; // temporary vector for sorting
 
     for (auto &conn : *connections) // extract the map to the vector
@@ -76,11 +80,11 @@ vector<connection> sortConnections(map<string, connection> *connections, bool by
         sortedConnections.push_back(conn);
     }
 
-    if (bytes) // sort by bytes
+    if (bytes) // sort by bytes per second
     {
         sort(sortedConnections.begin(), sortedConnections.end(), cmpBPS);
     }
-    else // sort by packets
+    else // sort by packets per second
     {
         sort(sortedConnections.begin(), sortedConnections.end(), cmpPPS);
     }
@@ -97,7 +101,8 @@ vector<connection> sortConnections(map<string, connection> *connections, bool by
 
 void newConnection(map<string, connection> *connections, packetData data)
 {
-    connection newConnection = {data.ipv4, data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, {data.time}, {0}, {data.size}, {0}, {1}}; // create new connection
+    // create new connection
+    connection newConnection = {data.ipv4, data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, {data.time}, {0}, {data.size}, {0}, {1}};
     // insert the new connection to the map, key is made from source and destination IP and port
     connections->insert(pair<string, connection>(data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort, newConnection));
 }
@@ -116,16 +121,18 @@ void addConnection(map<string, connection> *connections, packetData data)
 
     if (itSrcToDst != connections->end()) // if the connection already exists and it is from src to dst
     {
-        connections->at(keySrcToDst).timestamp.push_back(data.time); // add the time of the packet to the vector
+        // append all vectors with the new values (also 0s, to keep the vectors the same length)
+        connections->at(keySrcToDst).timestamp.push_back(data.time);
         connections->at(keySrcToDst).rxBytes.push_back(0);
-        connections->at(keySrcToDst).txBytes.push_back(data.size); // add the size of the packet to the vector
+        connections->at(keySrcToDst).txBytes.push_back(data.size);
         connections->at(keySrcToDst).rxPackets.push_back(0);
         connections->at(keySrcToDst).txPackets.push_back(1);
     }
     else if (itDstToSrc != connections->end()) // if the connection already exists and it is from dst to src
     {
-        connections->at(keyDstToSrc).timestamp.push_back(data.time); // add the time of the packet to the vector
-        connections->at(keyDstToSrc).rxBytes.push_back(data.size); // add the size of the packet to the vector
+        // append all vectors with the new values (also 0s, to keep the vectors the same length)
+        connections->at(keyDstToSrc).timestamp.push_back(data.time);
+        connections->at(keyDstToSrc).rxBytes.push_back(data.size);
         connections->at(keyDstToSrc).txBytes.push_back(0);
         connections->at(keyDstToSrc).rxPackets.push_back(1);
         connections->at(keyDstToSrc).txPackets.push_back(0);
@@ -139,7 +146,7 @@ void addConnection(map<string, connection> *connections, packetData data)
 void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections)
 {
     packetData data; // structure for packet data
-    data.time = pkthdr->ts; // get the time of the packet
+    data.time = pkthdr->ts; // get the time of the packet arrival
     data.size = pkthdr->len; // get the size of the packet in bytes
 
     const struct ether_header *eth_header = (const struct ether_header *)packet; // get the ethernet header
