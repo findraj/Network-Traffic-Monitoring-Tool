@@ -19,7 +19,7 @@ bool cmpPPS(pair<string, connection> a, pair<string, connection> b)
     return a.second.rxpps + a.second.txpps > b.second.rxpps + b.second.txpps; // sum speeds and compare
 }
 
-void refreshSpeeds(map<string, connection> &connections)
+void computeSpeeds(map<string, connection> &connections)
 {
     // get the current time
     timeval now = timeval();
@@ -27,23 +27,43 @@ void refreshSpeeds(map<string, connection> &connections)
 
     for (auto &conn : connections) // go through all connections and calculate the new speeds
     {
-        if (conn.second.timestamp.tv_sec - now.tv_sec + (conn.second.timestamp.tv_usec - now.tv_usec) / 1000000.0 > 1.0) // if the last packet was more than 1 second ago
+        conn.second.rxbps = 0;
+        conn.second.txbps = 0;
+        conn.second.rxpps = 0;
+        conn.second.txpps = 0;
+        vector<timeval> newTimestamp;
+        vector<int> newRxBytes;
+        vector<int> newTxBytes;
+        vector<int> newRxPackets;
+        vector<int> newTxPackets;
+
+        for (int i = 0; i < int(conn.second.timestamp.size()); i++) // go through all packets of the connection
         {
-            connections.erase(conn.first); // remove the connection
+            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= 1.0) // if the packet is from the last second
+            {
+                conn.second.rxbps += conn.second.rxBytes[i] * 8; // add the bytes to the speed
+                conn.second.txbps += conn.second.txBytes[i] * 8; // add the bytes to the speed
+                conn.second.rxpps += conn.second.rxPackets[i]; // add the packets to the speed
+                conn.second.txpps += conn.second.txPackets[i]; // add the packets to the speed
+                newTimestamp.push_back(conn.second.timestamp[i]); // add the timestamp to the new vector
+                newRxBytes.push_back(conn.second.rxBytes[i]); // add the bytes to the new vector
+                newTxBytes.push_back(conn.second.txBytes[i]); // add the bytes to the new vector
+                newRxPackets.push_back(conn.second.rxPackets[i]); // add the packets to the new vector
+                newTxPackets.push_back(conn.second.txPackets[i]); // add the packets to the new vector
+            }
         }
-        else
-        {
-            conn.second.rxbps = conn.second.rxBytes;
-            conn.second.rxpps = conn.second.rxPackets;
-            conn.second.txbps = conn.second.txBytes;
-            conn.second.txpps = conn.second.txPackets;
-        }
+
+        conn.second.timestamp = newTimestamp;
+        conn.second.rxBytes = newRxBytes;
+        conn.second.txBytes = newTxBytes;
+        conn.second.rxPackets = newRxPackets;
+        conn.second.txPackets = newTxPackets;
     }
 }
 
 vector<connection> sortConnections(map<string, connection> *connections, bool bytes)
 {
-    refreshSpeeds(*connections); // refresh the speeds
+    computeSpeeds(*connections); // refresh the speeds
     vector<pair<string, connection>> sortedConnections; // temporary vector for sorting
 
     for (auto &conn : *connections) // extract the map to the vector
@@ -72,10 +92,7 @@ vector<connection> sortConnections(map<string, connection> *connections, bool by
 
 void newConnection(map<string, connection> *connections, packetData data)
 {
-    // get the current time
-    timeval now = timeval();
-    gettimeofday(&now, NULL);
-    connection newConnection = {data.ipv4, data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, data.time, 0, data.size, 0, 1}; // create new connection
+    connection newConnection = {data.ipv4, data.srcIP, data.srcPort, data.dstIP, data.dstPort, data.proto, 0, 0, 0, 0, {data.time}, {0}, {data.size}, {0}, {1}}; // create new connection
     // insert the new connection to the map, key is made from source and destination IP and port
     connections->insert(pair<string, connection>(data.srcIP + ":" + data.srcPort + "-" + data.dstIP + ":" + data.dstPort, newConnection));
 }
@@ -94,13 +111,19 @@ void addConnection(map<string, connection> *connections, packetData data)
 
     if (itSrcToDst != connections->end()) // if the connection already exists and it is from src to dst
     {
-        connections->at(keySrcToDst).txBytes += data.size;
-        connections->at(keySrcToDst).txPackets++;
+        connections->at(keySrcToDst).timestamp.push_back(data.time); // add the time of the packet to the vector
+        connections->at(keySrcToDst).rxBytes.push_back(0);
+        connections->at(keySrcToDst).txBytes.push_back(data.size); // add the size of the packet to the vector
+        connections->at(keySrcToDst).rxPackets.push_back(0);
+        connections->at(keySrcToDst).txPackets.push_back(1);
     }
     else if (itDstToSrc != connections->end()) // if the connection already exists and it is from dst to src
     {
-        connections->at(keyDstToSrc).rxBytes += data.size;
-        connections->at(keyDstToSrc).rxPackets++;
+        connections->at(keyDstToSrc).timestamp.push_back(data.time); // add the time of the packet to the vector
+        connections->at(keyDstToSrc).rxBytes.push_back(data.size); // add the size of the packet to the vector
+        connections->at(keyDstToSrc).txBytes.push_back(0);
+        connections->at(keyDstToSrc).rxPackets.push_back(1);
+        connections->at(keyDstToSrc).txPackets.push_back(0);
     }
     else // if the connection does not exist
     {

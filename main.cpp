@@ -36,13 +36,13 @@ void screenHandler()
 
 void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet)
 {
-    signal(SIGINT, signalHandler); // set the signal handler
     packetHandler(pkthdr, packet, &connections); // handle the packet and update map of connections
     (void)userData; // suppress unused variable warning
 }
 
 int main(int argc, char *argv[])
 {
+    signal(SIGINT, signalHandler);
     arguments = parseArgs(argc, argv);
     bpf_u_int32 net;
     bpf_u_int32 mask;
@@ -75,6 +75,8 @@ int main(int argc, char *argv[])
     {
         printError("Cannot start packet capturing: " + string(pcap_geterr(handle)), true, handle);
     }
+
+    screenThread.join(); // wait for the screen thread to finish
 
     // properly close the program
     pcap_close(handle);

@@ -44,11 +44,11 @@ struct connection
     float rxpps;
     float txbps;
     float txpps;
-    timeval timestamp;
-    int rxBytes;
-    int txBytes;
-    int rxPackets;
-    int txPackets;
+    vector<timeval> timestamp;
+    vector<int> rxBytes;
+    vector<int> txBytes;
+    vector<int> rxPackets;
+    vector<int> txPackets;
 };
 
 /**

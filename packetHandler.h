@@ -60,12 +60,7 @@ bool cmpBPS(pair<string, connection> a, pair<string, connection> b);
  */
 bool cmpPPS(pair<string, connection> a, pair<string, connection> b);
 
-/**
- * @brief Function to refresh speeds of connections
- * 
- * @param connections Connections to refresh
- */
-void refreshSpeeds(map<string, connection> *connections);
+void computeSpeeds(map<string, connection> *connections);
 
 /**
  * @brief Function to sort connections and return 10 most active in vector
