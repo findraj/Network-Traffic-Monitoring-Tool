@@ -9,6 +9,19 @@
 
 #include "args.h"
 
+bool isNumber(string str)
+{
+    for (char c : str) // go through all characters
+    {
+        if (!isdigit(c)) // if the character is not a digit
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 args parseArgs(int argc, char *argv[])
 {
     args arguments;
@@ -56,6 +69,27 @@ args parseArgs(int argc, char *argv[])
                 else // switch not specified
                 {
                     printError("Switch not specified", false, NULL);
+                }
+            }
+            else if (currentArg == "-t")
+            {
+                if (i + 1 < argc) // check if there is another argument which is the frequency
+                {
+                    currentArg = argv[i + 1]; // get the time
+                    if (isNumber(currentArg)) // check if the time is a number
+                    {
+                        // set the time
+                        arguments.freq = stoi(currentArg);
+                    }
+                    else
+                    {
+                        printError("Frequency is not a number", false, NULL);
+                    }
+                    i++;
+                }
+                else // time not specified
+                {
+                    printError("Time not specified", false, NULL);
                 }
             }
             else // unknown argument

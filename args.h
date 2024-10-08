@@ -7,6 +7,7 @@
  * @author Jan Findra (xfindr01)
  */
 
+#include <cctype>
 #include "packetHandler.h"
 
 using namespace std;
@@ -21,7 +22,10 @@ struct args
 {
     string interface = "";
     bool bytes = true;
+    int freq = 1;
 };
+
+bool isNumber(string str);
 
 /**
  * @brief Parse arguments

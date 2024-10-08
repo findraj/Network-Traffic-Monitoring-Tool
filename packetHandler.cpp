@@ -19,7 +19,7 @@ bool cmpPPS(pair<string, connection> a, pair<string, connection> b)
     return a.second.rxpps + a.second.txpps > b.second.rxpps + b.second.txpps; // sum speeds and compare
 }
 
-void computeSpeeds(map<string, connection> &connections)
+void computeSpeeds(map<string, connection> &connections, int freq)
 {
     // get the current time
     timeval now = timeval();
@@ -39,19 +39,24 @@ void computeSpeeds(map<string, connection> &connections)
 
         for (int i = 0; i < int(conn.second.timestamp.size()); i++) // go through all packets of the connection
         {
-            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= 1.0) // if the packet is from the last second
+            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= float(freq)) // if the packet is from the last second
             {
-                conn.second.rxbps += conn.second.rxBytes[i] * 8; // add the bytes to the speed
-                conn.second.txbps += conn.second.txBytes[i] * 8; // add the bytes to the speed
-                conn.second.rxpps += conn.second.rxPackets[i]; // add the packets to the speed
-                conn.second.txpps += conn.second.txPackets[i]; // add the packets to the speed
-                newTimestamp.push_back(conn.second.timestamp[i]); // add the timestamp to the new vector
-                newRxBytes.push_back(conn.second.rxBytes[i]); // add the bytes to the new vector
-                newTxBytes.push_back(conn.second.txBytes[i]); // add the bytes to the new vector
-                newRxPackets.push_back(conn.second.rxPackets[i]); // add the packets to the new vector
-                newTxPackets.push_back(conn.second.txPackets[i]); // add the packets to the new vector
+                conn.second.rxbps += conn.second.rxBytes[i];
+                conn.second.txbps += conn.second.txBytes[i];
+                conn.second.rxpps += conn.second.rxPackets[i];
+                conn.second.txpps += conn.second.txPackets[i];
+                newTimestamp.push_back(conn.second.timestamp[i]);
+                newRxBytes.push_back(conn.second.rxBytes[i]);
+                newTxBytes.push_back(conn.second.txBytes[i]);
+                newRxPackets.push_back(conn.second.rxPackets[i]);
+                newTxPackets.push_back(conn.second.txPackets[i]);
             }
         }
+
+        conn.second.rxbps = conn.second.rxbps * 8 / freq;
+        conn.second.txbps = conn.second.txbps * 8 / freq;
+        conn.second.rxpps = conn.second.rxpps / freq;
+        conn.second.txpps = conn.second.txpps / freq;
 
         conn.second.timestamp = newTimestamp;
         conn.second.rxBytes = newRxBytes;
@@ -61,9 +66,9 @@ void computeSpeeds(map<string, connection> &connections)
     }
 }
 
-vector<connection> sortConnections(map<string, connection> *connections, bool bytes)
+vector<connection> sortConnections(map<string, connection> *connections, bool bytes, int freq)
 {
-    computeSpeeds(*connections); // refresh the speeds
+    computeSpeeds(*connections, freq); // refresh the speeds
     vector<pair<string, connection>> sortedConnections; // temporary vector for sorting
 
     for (auto &conn : *connections) // extract the map to the vector
