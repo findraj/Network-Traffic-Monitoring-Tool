@@ -1,9 +1,9 @@
 /**
  * ISA Project 2024
- * 
+ *
  * @file packetHandler.cpp
  * @brief Packet handler functions
- * 
+ *
  * @author Jan Findra (xfindr01)
  */
 
@@ -143,14 +143,14 @@ void addConnection(map<string, connection> *connections, packetData data)
     }
 }
 
-void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<string, connection> *connections)
+void packetHandler(const struct pcap_pkthdr *pkthdr, const u_char *packet, map<string, connection> *connections)
 {
-    packetData data; // structure for packet data
-    data.time = pkthdr->ts; // get the time of the packet arrival
+    packetData data;         // structure for packet data
+    data.time = pkthdr->ts;  // get the time of the packet arrival
     data.size = pkthdr->len; // get the size of the packet in bytes
 
-    const struct ether_header *eth_header = (const struct ether_header *)packet; // get the ethernet header
-    const struct ip *ip_header = (const struct ip *)(packet + sizeof(struct ether_header)); // get the IP header
+    const struct ether_header *eth_header = (const struct ether_header *)packet;                             // get the ethernet header
+    const struct ip *ip_header = (const struct ip *)(packet + sizeof(struct ether_header));                  // get the IP header
     struct tcphdr *tcp_header = (struct tcphdr *)(packet + sizeof(struct ether_header) + sizeof(struct ip)); // get the TCP header
     struct udphdr *udp_header = (struct udphdr *)(packet + sizeof(struct ether_header) + sizeof(struct ip)); // get the UDP header
 
@@ -191,28 +191,28 @@ void packetHandler(const struct pcap_pkthdr* pkthdr, const u_char* packet, map<s
 
     switch (ip_header->ip_p) // get the protocol
     {
-        case IPPROTO_ICMP:
-            data.proto = "icmp";
-            break;
-        case IPPROTO_ICMPV6:
-            data.proto = "icmpv6";
-            break;
-        case IPPROTO_IGMP:
-            data.proto = "igmp";
-            break;
-        case IPPROTO_TCP:
-            data.proto = "tcp";
-            data.srcPort = to_string(ntohs(tcp_header->th_sport)); // get the source port
-            data.dstPort = to_string(ntohs(tcp_header->th_dport)); // get the destination port 
-            break;
-        case IPPROTO_UDP:
-            data.proto = "udp";
-            data.srcPort = to_string(ntohs(udp_header->uh_sport)); // get the source port
-            data.dstPort = to_string(ntohs(udp_header->uh_dport)); // get the destination port
-            break;
-        default:
-            data.proto = "other";
-            break;
+    case IPPROTO_ICMP:
+        data.proto = "icmp";
+        break;
+    case IPPROTO_ICMPV6:
+        data.proto = "icmpv6";
+        break;
+    case IPPROTO_IGMP:
+        data.proto = "igmp";
+        break;
+    case IPPROTO_TCP:
+        data.proto = "tcp";
+        data.srcPort = to_string(ntohs(tcp_header->th_sport)); // get the source port
+        data.dstPort = to_string(ntohs(tcp_header->th_dport)); // get the destination port
+        break;
+    case IPPROTO_UDP:
+        data.proto = "udp";
+        data.srcPort = to_string(ntohs(udp_header->uh_sport)); // get the source port
+        data.dstPort = to_string(ntohs(udp_header->uh_dport)); // get the destination port
+        break;
+    default:
+        data.proto = "other";
+        break;
     }
 
     addConnection(connections, data); // add the connection to the map

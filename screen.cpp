@@ -1,9 +1,9 @@
 /**
  * ISA Project 2024
- * 
+ *
  * @file screen.cpp
  * @brief Screen functions
- * 
+ *
  * @author Jan Findra (xfindr01)
  */
 
@@ -36,16 +36,16 @@ void initScreen()
 
 void printHeader()
 {
-    int width = getmaxx(stdscr) / 5; // width of one column
-    mvprintw(0, 0, "%s", "Src IP:port"); // source IP and port
+    int width = getmaxx(stdscr) / 5;         // width of one column
+    mvprintw(0, 0, "%s", "Src IP:port");     // source IP and port
     mvprintw(0, width, "%s", "Dst IP:port"); // destination IP and port
-    mvprintw(0, width * 2, "%s", "Proto"); // protocol
-    mvprintw(0, width * 3, "%s", "Rx"); // received
-    mvprintw(0, width * 4, "%s", "Tx"); // transmitted
-    mvprintw(1, width * 3, "%s", "b/s"); // bytes per second
-    mvprintw(1, width * 3.5, "%s", "p/s"); // packets per second
-    mvprintw(1, width * 4, "%s", "b/s"); // bytes per second
-    mvprintw(1, width * 4.5, "%s", "p/s"); // packets per second
+    mvprintw(0, width * 2, "%s", "Proto");   // protocol
+    mvprintw(0, width * 3, "%s", "Rx");      // received
+    mvprintw(0, width * 4, "%s", "Tx");      // transmitted
+    mvprintw(1, width * 3, "%s", "b/s");     // bytes per second
+    mvprintw(1, width * 3.5, "%s", "p/s");   // packets per second
+    mvprintw(1, width * 4, "%s", "b/s");     // bytes per second
+    mvprintw(1, width * 4.5, "%s", "p/s");   // packets per second
 }
 
 void printIPandPort(bool ipv4, string ip, string port, int row, int col)
@@ -76,13 +76,13 @@ void printIPandPort(bool ipv4, string ip, string port, int row, int col)
 
 void printLine(int row, connection conn)
 {
-    int width = getmaxx(stdscr) / 5; // width of one column
-    printIPandPort(conn.ipv4, conn.srcIP, conn.srcPort, row, 0); // source IP and port
-    printIPandPort(conn.ipv4, conn.dstIP, conn.dstPort, row, width); // destination IP and port
-    mvprintw(row, width * 2, "%s", conn.proto.c_str()); // protocol
-    mvprintw(row, width * 3, "%s", floatToString(conn.rxbps).c_str()); // received bytes per second
+    int width = getmaxx(stdscr) / 5;                                     // width of one column
+    printIPandPort(conn.ipv4, conn.srcIP, conn.srcPort, row, 0);         // source IP and port
+    printIPandPort(conn.ipv4, conn.dstIP, conn.dstPort, row, width);     // destination IP and port
+    mvprintw(row, width * 2, "%s", conn.proto.c_str());                  // protocol
+    mvprintw(row, width * 3, "%s", floatToString(conn.rxbps).c_str());   // received bytes per second
     mvprintw(row, width * 3.5, "%s", floatToString(conn.rxpps).c_str()); // received packets per second
-    mvprintw(row, width * 4, "%s", floatToString(conn.txbps).c_str()); // transmitted bytes per second
+    mvprintw(row, width * 4, "%s", floatToString(conn.txbps).c_str());   // transmitted bytes per second
     mvprintw(row, width * 4.5, "%s", floatToString(conn.txpps).c_str()); // transmitted packets per second
 }
 

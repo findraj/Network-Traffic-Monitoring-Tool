@@ -1,9 +1,9 @@
 /**
  * ISA Project 2024
- * 
+ *
  * @file messages.h
  * @brief Functions for printing messages/errors
- * 
+ *
  * @author Jan Findra (xfindr01)
  */
 
@@ -22,7 +22,7 @@ void printHelp();
 
 /**
  * @brief Print error message
- * 
+ *
  * @param message Error message
  * @param closeScr True if the screen should be closed
  * @param handle Handle to pcap, NULL if not needed

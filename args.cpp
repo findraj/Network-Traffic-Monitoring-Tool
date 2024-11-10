@@ -1,9 +1,9 @@
 /**
  * ISA Project 2024
- * 
+ *
  * @file args.cpp
  * @brief Structure and function for parsing arguments
- * 
+ *
  * @author Jan Findra (xfindr01)
  */
 
@@ -53,7 +53,7 @@ args parseArgs(int argc, char *argv[])
                 if (i + 1 < argc) // check if there is another argument which is the switch
                 {
                     currentArg = argv[i + 1]; // get the switch
-                    if (currentArg == "b") // if the switch is b set bytes to true
+                    if (currentArg == "b")    // if the switch is b set bytes to true
                     {
                         arguments.bytes = true;
                     }
@@ -99,6 +99,6 @@ args parseArgs(int argc, char *argv[])
             }
         }
     }
-    
+
     return arguments;
 }

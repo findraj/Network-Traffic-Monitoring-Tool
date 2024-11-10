@@ -1,15 +1,15 @@
 /**
  * ISA Project 2024
- * 
+ *
  * @file main.cpp
  * @brief Main file of the project
- * 
+ *
  * @author Jan Findra (xfindr01)
  */
 
 #include "main.h"
 
-map<string, connection> connections; // map of connections
+map<string, connection> connections;  // map of connections
 vector<connection> sortedConnections; // vector of 10 most active connections
 args arguments;
 pcap_t *handle;
@@ -20,7 +20,7 @@ void signalHandler(int signum)
     if (signum == SIGINT)
     {
         pcap_breakloop(handle); // break the packet capturing loop
-        running = false; // set the running flag to false
+        running = false;        // set the running flag to false
     }
 }
 
@@ -34,10 +34,10 @@ void screenHandler()
     }
 }
 
-void pHandler(u_char *userData, const struct pcap_pkthdr* pkthdr, const u_char* packet)
+void pHandler(u_char *userData, const struct pcap_pkthdr *pkthdr, const u_char *packet)
 {
     packetHandler(pkthdr, packet, &connections); // handle the packet and update map of connections
-    (void)userData; // suppress unused variable warning
+    (void)userData;                              // suppress unused variable warning
 }
 
 int main(int argc, char *argv[])
