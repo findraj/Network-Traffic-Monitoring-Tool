@@ -60,17 +60,17 @@ bool cmpBPS(pair<string, connection> a, pair<string, connection> b);
  */
 bool cmpPPS(pair<string, connection> a, pair<string, connection> b);
 
-void computeSpeeds(map<string, connection> *connections, int freq);
+void computeSpeeds(map<string, connection> *connections, int period);
 
 /**
  * @brief Function to sort connections and return 10 most active in vector
  *
  * @param connections Connections to sort
  * @param bytes True if sorting by bytes, false if sorting by packets
- * @param freq Time between updates
+ * @param period Time between updates
  * @return Sorted connections
  */
-vector<connection> sortConnections(map<string, connection> *connections, bool bytes, int freq);
+vector<connection> sortConnections(map<string, connection> *connections, bool bytes, int period);
 
 /**
  * @brief Function to create new connection

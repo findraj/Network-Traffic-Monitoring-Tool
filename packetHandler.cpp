@@ -19,7 +19,7 @@ bool cmpPPS(pair<string, connection> a, pair<string, connection> b)
     return a.second.rxpps + a.second.txpps > b.second.rxpps + b.second.txpps; // sum speeds and compare
 }
 
-void computeSpeeds(map<string, connection> &connections, int freq)
+void computeSpeeds(map<string, connection> &connections, int period)
 {
     // get the current time
     timeval now = timeval();
@@ -41,7 +41,7 @@ void computeSpeeds(map<string, connection> &connections, int freq)
 
         for (int i = 0; i < int(conn.second.timestamp.size()); i++) // go through all packet records of the connection
         {
-            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= float(freq)) // if the packet has been received in the recent time period
+            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= float(period)) // if the packet has been received in the recent time period
             {
                 // add the stored values to the speeds
                 conn.second.rxbps += conn.second.rxBytes[i];
@@ -57,10 +57,10 @@ void computeSpeeds(map<string, connection> &connections, int freq)
             }
         }
         // calculate the speeds
-        conn.second.rxbps = conn.second.rxbps * 8 / freq; // convert to bits per second
-        conn.second.txbps = conn.second.txbps * 8 / freq; // convert to bits per second
-        conn.second.rxpps = conn.second.rxpps / freq;
-        conn.second.txpps = conn.second.txpps / freq;
+        conn.second.rxbps = conn.second.rxbps * 8 / period; // convert to bits per second
+        conn.second.txbps = conn.second.txbps * 8 / period; // convert to bits per second
+        conn.second.rxpps = conn.second.rxpps / period;
+        conn.second.txpps = conn.second.txpps / period;
         // replace the old values with the new ones
         conn.second.timestamp = newTimestamp;
         conn.second.rxBytes = newRxBytes;
@@ -70,9 +70,9 @@ void computeSpeeds(map<string, connection> &connections, int freq)
     }
 }
 
-vector<connection> sortConnections(map<string, connection> *connections, bool bytes, int freq)
+vector<connection> sortConnections(map<string, connection> *connections, bool bytes, int period)
 {
-    computeSpeeds(*connections, freq);
+    computeSpeeds(*connections, period);
     vector<pair<string, connection>> sortedConnections; // temporary vector for sorting
 
     for (auto &conn : *connections) // extract the map to the vector

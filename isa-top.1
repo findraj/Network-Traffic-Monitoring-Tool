@@ -1,0 +1,36 @@
+.TH ISA-TOP 1
+.SH NAME
+isa-top \- display top 10 most communicating connections. Similar to \fIiftop\fR.
+.SH SYNOPSIS
+.B isa-top
+\fB\-i\fR \fIinterface\fR
+[\fB\-s\fR \fIb|p\fR]
+[\fB\-t\fR \fIperiod\fR]
+.SH DESCRIPTION
+For given \fIinterface\fR, \fBisa-top\fR displays the top 10 most communicating connections. The connections are sorted by speed in bites per second or packets per second.
+.PP
+The data is displayed in a table with the following columns:
+.PP
+\fBSrc IP:port\fR       Source IP address and port divided by colon. IPv6 addresses are enclosed in square brackets.
+.PP
+\fBDst Ip:port\fR       Destination IP address and port divided by colon. IPv6 addresses are enclosed in square brackets.
+.PP
+\fBProto\fR             Protocol name.
+.PP
+\fBRx\fR                Recieved communcation speed in bits per second (\fIb/s\fR) and packets per second (\fIp/s\fR).
+.PP
+\fBTx\fR                Transmitted communcation speed in bits per second (\fIb/s\fR) and packets per second (\fIp/s\fR).
+.SH OPTIONS
+.TP
+\fB\-i\fR \fIinterface\fR
+Mandatory. Specifies the interface to monitor.
+.TP
+\fB\-s\fR \fIb|p\fR
+Optional. Specifies the sorting order. If \fIb\fR is specified, the connections are sorted by speed in bits per second. If \fIp\fR is specified, the connections are sorted by speed in packets per second.
+.IP
+Default is \fIb\fR.
+.TP
+\fB\-t\fR \fIperiod\fR
+Optional. Specifies the period in seconds for which the data is collected.
+.IP
+Default is 1 second.

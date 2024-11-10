@@ -17,13 +17,13 @@ using namespace std;
  *
  * @param interface Interface name
  * @param bytes True if bytes, false if packets
- * @param freq Frequency of updates, time between updates
+ * @param period Period of updates, time between updates
  */
 struct args
 {
     string interface = "";
     bool bytes = true;
-    int freq = 1;
+    int period = 1;
 };
 
 /**

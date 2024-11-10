@@ -74,23 +74,23 @@ args parseArgs(int argc, char *argv[])
             }
             else if (currentArg == "-t")
             {
-                if (i + 1 < argc) // check if there is another argument which is the frequency
+                if (i + 1 < argc) // check if there is another argument which is the period
                 {
-                    currentArg = argv[i + 1]; // get the time
-                    if (isNumber(currentArg)) // check if the time is a number
+                    currentArg = argv[i + 1]; // get the period
+                    if (isNumber(currentArg)) // check if the period is a number
                     {
-                        // set the time
-                        arguments.freq = stoi(currentArg);
+                        // set the period
+                        arguments.period = stoi(currentArg);
                     }
                     else
                     {
-                        printError("Frequency is not a number", false, NULL);
+                        printError("Period is not a number", false, NULL);
                     }
                     i++;
                 }
-                else // time not specified
+                else // period not specified
                 {
-                    printError("Time not specified", false, NULL);
+                    printError("Period not specified", false, NULL);
                 }
             }
             else // unknown argument
