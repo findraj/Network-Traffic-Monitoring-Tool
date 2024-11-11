@@ -8,6 +8,7 @@
  */
 
 #include <stdio.h>
+#include <signal.h>
 #include <thread>
 #include "args.h"
 
