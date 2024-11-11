@@ -8,6 +8,7 @@
  */
 
 #include "packetHandler.h"
+#include <algorithm>
 
 bool cmpBPS(pair<string, connection> a, pair<string, connection> b)
 {
