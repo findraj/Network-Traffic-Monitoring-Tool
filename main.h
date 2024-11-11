@@ -8,7 +8,6 @@
  */
 
 #include <stdio.h>
-#include <unistd.h>
 #include <thread>
 #include "args.h"
 

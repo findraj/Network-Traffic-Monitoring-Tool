@@ -7,7 +7,6 @@
  * @author Jan Findra (xfindr01)
  */
 
-#include <pcap.h>
 #include <string>
 #include <ctime>
 #include <netinet/if_ether.h>
