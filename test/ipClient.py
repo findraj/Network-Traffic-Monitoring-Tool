@@ -1,4 +1,5 @@
 import socket
+import time
 
 SERVER_IP = '127.0.0.1'
 TCP_PORT = 12345
@@ -36,11 +37,22 @@ def send_icmp6():
 
 # Run Clients
 if __name__ == "__main__":
+    # test 1
     for i in range(20):
         send_tcp()
+        time.sleep(1)
+
+    # test 2
     for i in range(20):
         send_udp()
+        time.sleep(1)
+    
+    # test 3
     for i in range(20):
         send_icmp()
+        time.sleep(1)
+
+    # test 4
     for i in range(20):
         send_icmp6()
+        time.sleep(1)

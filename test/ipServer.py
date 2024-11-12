@@ -1,4 +1,5 @@
 import socket
+import time
 
 # Server IP and Ports
 SERVER_IP = '127.0.0.1'  # Localhost for testing
@@ -33,6 +34,7 @@ def start_udp_server():
             break
         data, address = udp_socket.recvfrom(1024)
         udp_socket.sendto("UDP Acknowledgment".encode(), address)
+        print(f"Received UDP message from {address}")
 
 # ICMP Server
 def start_icmp_server():
@@ -62,7 +64,15 @@ def start_icmp6_server():
 
 # Start servers
 if __name__ == "__main__":
+    # test 1
     start_tcp_server()
+
+    # test 2
     start_udp_server()
+
+    # test 3
     start_icmp_server()
+
+    # test 4
     start_icmp6_server()
+
