@@ -15,7 +15,7 @@ all : clean $(TARGET)
 
 clean:
 	rm -f $(TARGET)
-	rm -f xfindr01.zip
+	rm -f xfindr01.tar
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) -lpcap -lncurses
@@ -25,7 +25,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 pack: clean
-	zip -r xfindr01.zip .
+	tar --exclude='.vscode' --exclude='.git' --exclude='.gitignore' -cf xfindr01.tar *
 
 run: $(TARGET)
 	./isa-top -i en5

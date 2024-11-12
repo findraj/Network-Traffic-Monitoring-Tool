@@ -8,7 +8,7 @@
 isa-top
 # Ignore object files
 *.o
-# Ignore zip file
-xfindr01.zip
+# Ignore tar file
+xfindr01.tar
 # Ignore .vscode directory
 .vscode
