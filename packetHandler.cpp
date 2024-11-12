@@ -26,48 +26,52 @@ void computeSpeeds(map<string, connection> &connections, int period)
     timeval now = timeval();
     gettimeofday(&now, NULL);
 
-    for (auto &conn : connections) // go through all connections and calculate the speeds
-    {
-        // set the speeds to 0
-        conn.second.rxbps = 0;
-        conn.second.txbps = 0;
-        conn.second.rxpps = 0;
-        conn.second.txpps = 0;
-        // temporary vectors for new values
-        vector<timeval> newTimestamp;
-        vector<int> newRxBytes;
-        vector<int> newTxBytes;
-        vector<int> newRxPackets;
-        vector<int> newTxPackets;
+    auto conn = begin(connections); // iterator for the map of connections
 
-        for (int i = 0; i < int(conn.second.timestamp.size()); i++) // go through all packet records of the connection
+    while (conn != end(connections)) // go through all connections
+    {
+        // iterators for the vectors of the connection
+        auto timestamp = begin(conn->second.timestamp);
+        auto rxBytes = begin(conn->second.rxBytes);
+        auto txBytes = begin(conn->second.txBytes);
+        auto rxPackets = begin(conn->second.rxPackets);
+        auto txPackets = begin(conn->second.txPackets);
+
+        while (timestamp != end(conn->second.timestamp)) // go through all vectors, they have the same length, so we can use one iterator as condition
         {
-            if (now.tv_sec - conn.second.timestamp[i].tv_sec + (now.tv_usec - conn.second.timestamp[i].tv_usec) / 1000000 <= float(period)) // if the packet has been received in the recent time period
+            if (now.tv_sec - timestamp->tv_sec + (now.tv_usec - timestamp->tv_usec) / 1000000 > float(period)) // if the packet is older than the period
             {
-                // add the stored values to the speeds
-                conn.second.rxbps += conn.second.rxBytes[i];
-                conn.second.txbps += conn.second.txBytes[i];
-                conn.second.rxpps += conn.second.rxPackets[i];
-                conn.second.txpps += conn.second.txPackets[i];
-                // store the valid values for future use
-                newTimestamp.push_back(conn.second.timestamp[i]);
-                newRxBytes.push_back(conn.second.rxBytes[i]);
-                newTxBytes.push_back(conn.second.txBytes[i]);
-                newRxPackets.push_back(conn.second.rxPackets[i]);
-                newTxPackets.push_back(conn.second.txPackets[i]);
+                // remove the old data from the vectors
+                timestamp = conn->second.timestamp.erase(timestamp);
+                rxBytes = conn->second.rxBytes.erase(rxBytes);
+                txBytes = conn->second.txBytes.erase(txBytes);
+                rxPackets = conn->second.rxPackets.erase(rxPackets);
+                txPackets = conn->second.txPackets.erase(txPackets);
+            }
+            else // if the packet is not older than the period
+            {
+                // add the size and number of packets to the speeds, temporary before calculating the speed
+                conn->second.rxbps += *rxBytes;
+                conn->second.txbps += *txBytes;
+                conn->second.rxpps += *rxPackets;
+                conn->second.txpps += *txPackets;
+                // move the iterators to the next element
+                timestamp++;
+                rxBytes++;
+                txBytes++;
+                rxPackets++;
+                txPackets++;
             }
         }
-        // calculate the speeds
-        conn.second.rxbps = conn.second.rxbps * 8 / period; // convert to bits per second
-        conn.second.txbps = conn.second.txbps * 8 / period; // convert to bits per second
-        conn.second.rxpps = conn.second.rxpps / period;
-        conn.second.txpps = conn.second.txpps / period;
-        // replace the old values with the new ones
-        conn.second.timestamp = newTimestamp;
-        conn.second.rxBytes = newRxBytes;
-        conn.second.txBytes = newTxBytes;
-        conn.second.rxPackets = newRxPackets;
-        conn.second.txPackets = newTxPackets;
+
+        if (conn->second.timestamp.size() == 0) // if the connection got no packets in the period
+        {
+            conn = connections.erase(conn); // remove the connection from the map
+        }
+        else
+        {
+            conn++; // move the iterator to the next connection
+        }
     }
 }
 
