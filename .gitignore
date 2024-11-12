@@ -12,3 +12,5 @@ isa-top
 xfindr01.tar
 # Ignore .vscode directory
 .vscode
+# Ignore __pycache__ directory
+test/__pycache__
