@@ -84,7 +84,11 @@ args parseArgs(int argc, char *argv[])
                     }
                     else
                     {
-                        printError("Period is not a number", false, NULL);
+                        printError("Period is not an integer", false, NULL);
+                    }
+                    if (arguments.period < 1) // check if the period is greater than 0
+                    {
+                        printError("Period must be greater than 0", false, NULL);
                     }
                     i++;
                 }

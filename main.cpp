@@ -30,7 +30,14 @@ void screenHandler()
     {
         sortedConnections = sortConnections(&connections, arguments.bytes, arguments.period); // sort connections and return 10 most active
         printScreen(&sortedConnections);
-        this_thread::sleep_for(chrono::seconds(arguments.period)); // sleep for the time set by perioduency argument
+        for (int i = 0; i < arguments.period * 2; i++) // break sleep cycle to 0.5 second intervals, to make the program more responsive to SIGINT
+        {
+            if (!running)
+            {
+                break;
+            }
+            this_thread::sleep_for(chrono::milliseconds(500)); // sleep for 0.5 seconds
+        }
     }
 }
 

@@ -11,13 +11,15 @@
 
 void printHelp()
 {
-    cout << "Usage: ./isa-top -i interface [-s b|p]" << endl
+    cout << "Usage: ./isa-top -i interface [-s b|p] [-t seconds]" << endl
          << "Options:" << endl
-         << "  -i interface  Interface to listen on" << endl
-         << "  -s b|p        Type of speed to be ordered by" << endl
-         << "                b - number of bytes per second (B/s)" << endl
-         << "                p - number of packets per second (packet/s)" << endl
-         << "                 -t seconds    Time in seconds between updates" << endl
+         << "   -i interface    Interface to listen on" << endl
+         << "   -s b|p          Type of speed to be ordered by" << endl
+         << "                   b - number of bytes per second (B/s)" << endl
+         << "                   p - number of packets per second (packet/s)" << endl
+         << "                   Default is b" << endl
+         << "   -t seconds      Period in seconds between updates" << endl
+         << "                   Default is 1" << endl
          << "Note: The program might require root privileges to run" << endl;
 }
 
