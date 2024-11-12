@@ -36,7 +36,11 @@ def send_icmp6():
 
 # Run Clients
 if __name__ == "__main__":
-    send_tcp()
-    send_udp()
-    send_icmp()
-    send_icmp6()
+    for i in range(20):
+        send_tcp()
+    for i in range(20):
+        send_udp()
+    for i in range(20):
+        send_icmp()
+    for i in range(20):
+        send_icmp6()
