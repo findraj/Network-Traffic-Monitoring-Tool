@@ -38,7 +38,7 @@ void printHeader()
 {
     int protoWidth = 8;                                                    // width of the protocol column, 6 is the longest protocol name (icmpv6) + 2 spaces
     int speedWidth = 8;                                                    // width of the speed columns, 6 is the longest speed (xxx.xu) + 2 spaces
-    int addrWidth = (getmaxx(stdscr) - protoWidth - speedWidth * 4) / 2;   // width of one column
+    int addrWidth = (getmaxx(stdscr) - protoWidth - speedWidth * 4) / 2;   // width of the address columns
     mvprintw(0, 0, "%s", "Src IP:port");                                   // source IP and port
     mvprintw(0, addrWidth, "%s", "Dst IP:port");                           // destination IP and port
     mvprintw(0, addrWidth * 2, "%s", "Proto");                             // protocol
@@ -80,7 +80,7 @@ void printLine(int row, connection conn)
 {
     int protoWidth = 8;                                                                                  // width of the protocol column, 6 is the longest protocol name (icmpv6) + 2 spaces
     int speedWidth = 8;                                                                                  // width of the speed columns, 6 is the longest speed (xxx.xu) + 2 spaces
-    int addrWidth = (getmaxx(stdscr) - protoWidth - speedWidth * 4) / 2;                                 // width of one column
+    int addrWidth = (getmaxx(stdscr) - protoWidth - speedWidth * 4) / 2;                                 // width of the address columns
     printIPandPort(conn.ipv4, conn.srcIP, conn.srcPort, row, 0);                                         // source IP and port
     printIPandPort(conn.ipv4, conn.dstIP, conn.dstPort, row, addrWidth);                                 // destination IP and port
     mvprintw(row, addrWidth * 2, "%s", conn.proto.c_str());                                              // protocol
