@@ -37,6 +37,12 @@ void computeSpeeds(map<string, connection> &connections, int period)
         auto rxPackets = begin(conn->second.rxPackets);
         auto txPackets = begin(conn->second.txPackets);
 
+        // clear the speeds
+        conn->second.rxbps = 0;
+        conn->second.txbps = 0;
+        conn->second.rxpps = 0;
+        conn->second.txpps = 0;
+
         while (timestamp != end(conn->second.timestamp)) // go through all vectors, they have the same length, so we can use one iterator as condition
         {
             if (now.tv_sec - timestamp->tv_sec + (now.tv_usec - timestamp->tv_usec) / 1000000 > float(period)) // if the packet is older than the period
@@ -70,7 +76,11 @@ void computeSpeeds(map<string, connection> &connections, int period)
         }
         else
         {
-            conn++; // move the iterator to the next connection
+            conn->second.rxbps = conn->second.rxbps * 8 / period; // calculate the speed in bits per second
+            conn->second.txbps = conn->second.txbps * 8 / period; // calculate the speed in bits per second
+            conn->second.rxpps = conn->second.rxpps / period;     // calculate the speed in packets per second
+            conn->second.txpps = conn->second.txpps / period;     // calculate the speed in packets per second
+            conn++;                                               // move the iterator to the next connection
         }
     }
 }
