@@ -28,16 +28,16 @@ void screenHandler()
 {
     while (running)
     {
+        auto start = chrono::high_resolution_clock::now(); // start time measuring
+
         sortedConnections = sortConnections(&connections, arguments.bytes, arguments.period); // sort connections and return 10 most active
         printScreen(&sortedConnections);
-        for (int i = 0; i < arguments.period * 2; i++) // break sleep cycle to 0.5 second intervals, to make the program more responsive to SIGINT
-        {
-            if (!running)
-            {
-                break;
-            }
-            this_thread::sleep_for(chrono::milliseconds(500)); // sleep for 0.5 seconds
-        }
+
+        auto end = chrono::high_resolution_clock::now();                          // end time measuring
+        auto duration = chrono::duration_cast<chrono::microseconds>(end - start); // get the duration of the screen handling
+        int sleepTime = arguments.period * 1000000 - duration.count();            // calculate the remaining time to sleep
+
+        this_thread::sleep_for(chrono::microseconds(sleepTime)); // sleep for the remaining time
     }
 }
 
