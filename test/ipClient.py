@@ -4,20 +4,24 @@ import time
 SERVER_IP = '127.0.0.1'
 TCP_PORT = 12345
 UDP_PORT = 12346
+TCP_PORT_2 = 12347
+UDP_PORT_2 = 12348
 
 # TCP Client
-def send_tcp():
+def send_tcp(message):
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_socket.bind((SERVER_IP, TCP_PORT_2))
     tcp_socket.connect((SERVER_IP, TCP_PORT))
-    tcp_socket.send("Hello from TCP Client!".encode())
+    tcp_socket.send(message.encode())
     response = tcp_socket.recv(1024)
     print("TCP Response:", response.decode())
     tcp_socket.close()
 
 # UDP Client
-def send_udp():
+def send_udp(message):
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    udp_socket.sendto("Hello from UDP Client!".encode(), (SERVER_IP, UDP_PORT))
+    udp_socket.bind((SERVER_IP, UDP_PORT_2))
+    udp_socket.sendto(message.encode(), (SERVER_IP, UDP_PORT))
     response, _ = udp_socket.recvfrom(1024)
     print("UDP Response:", response.decode())
 
@@ -39,18 +43,26 @@ def send_icmp6():
 if __name__ == "__main__":
     # test 1
     for i in range(20):
-        send_tcp()
+        send_tcp("TCP")
         time.sleep(1)
+    send_tcp("exit")
+
+    time.sleep(1)
 
     # test 2
     for i in range(20):
-        send_udp()
+        send_udp("UDP")
         time.sleep(1)
+    send_udp("exit")
+
+    time.sleep(1)
     
     # test 3
     for i in range(20):
         send_icmp()
         time.sleep(1)
+
+    time.sleep(1)
 
     # test 4
     for i in range(20):

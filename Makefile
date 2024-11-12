@@ -27,5 +27,7 @@ $(TARGET): $(OBJS)
 pack: clean
 	tar --exclude='.vscode' --exclude='.git' --exclude='.gitignore' -cf xfindr01.tar *
 
-run: $(TARGET)
-	./isa-top -i en5
+test: clean $(TARGET)
+	sudo python3 test/ipServer.py > /dev/null 2>&1 &
+	sudo python3 test/ipClient.py > /dev/null 2>&1 &
+	sudo ./isa-top -i lo
