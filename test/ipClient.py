@@ -1,3 +1,9 @@
+# ISA Project 2024
+
+# file: ipClient.py
+# brief: Client for creating traffic
+# author: Jan Findra (xfindr01)
+
 import socket
 import time
 
@@ -8,97 +14,96 @@ TCP_PORT_2 = 12347
 UDP_PORT_2 = 12348
 
 # TCP Client
-def send_tcp(message):
-    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_socket.bind((SERVER_IP, TCP_PORT_2))
-    tcp_socket.connect((SERVER_IP, TCP_PORT))
-    tcp_socket.send(message.encode())
-    response = tcp_socket.recv(1024)
+def sendTcp(message):
+    tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcpSocket.bind((SERVER_IP, TCP_PORT_2))
+    tcpSocket.connect((SERVER_IP, TCP_PORT))
+    tcpSocket.send(message.encode())
+    response = tcpSocket.recv(1024)
     print("TCP Response:", response.decode())
-    tcp_socket.close()
+    tcpSocket.close()
 
 # UDP Client
-def send_udp(message):
-    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    udp_socket.bind((SERVER_IP, UDP_PORT_2))
-    udp_socket.sendto(message.encode(), (SERVER_IP, UDP_PORT))
-    response, _ = udp_socket.recvfrom(1024)
+def sendUdp(message):
+    udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udpSocket.bind((SERVER_IP, UDP_PORT_2))
+    udpSocket.sendto(message.encode(), (SERVER_IP, UDP_PORT))
+    response, _ = udpSocket.recvfrom(1024)
     print("UDP Response:", response.decode())
-    udp_socket.close()
+    udpSocket.close()
 
 # ICMP Client
-def send_icmp():
-    icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-    icmp_packet = b'\x08\x00\xf7\xff' + b'\x00' * 60  # Simple echo request
-    icmp_socket.sendto(icmp_packet, (SERVER_IP, 0))
+def sendIcmp():
+    icmpSocket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+    icmpPacket = b'\x08\x00\xf7\xff' + b'\x00' * 60  # simple echo request
+    icmpSocket.sendto(icmpPacket, (SERVER_IP, 0))
     print("ICMP Message Sent")
-    icmp_socket.close()
+    icmpSocket.close()
 
 # ICMPv6 Client
-def send_icmp6():
-    icmp6_socket = socket.socket(socket.AF_INET6, socket.SOCK_RAW, socket.IPPROTO_ICMPV6)
-    icmp6_packet = b'\x80\x00\xf7\xff' + b'\x00' * 60  # Simple ICMPv6 echo request
-    icmp6_socket.sendto(icmp6_packet, ('::1', 0))  # IPv6 localhost
+def sendIcmp6():
+    icmp6Socket = socket.socket(socket.AF_INET6, socket.SOCK_RAW, socket.IPPROTO_ICMPV6)
+    icmp6Packet = b'\x80\x00\xf7\xff' + b'\x00' * 60 # simple ICMPv6 echo request
+    icmp6Socket.sendto(icmp6Packet, ('::1', 0))
     print("ICMPv6 Message Sent")
-    icmp6_socket.close()
+    icmp6Socket.close()
 
-# Run Clients
 if __name__ == "__main__":
     # test 1
     for i in range(10):
-        send_tcp("TCP")
+        sendTcp("TCP")
         time.sleep(1)
-    send_tcp("exit")
+    sendTcp("exit")
 
     time.sleep(1)
 
     # test 2
     for i in range(10):
-        send_udp("UDP")
+        sendUdp("UDP")
         time.sleep(1)
-    send_udp("exit")
+    sendUdp("exit")
 
     time.sleep(1)
     
     # test 3
     for i in range(10):
-        send_icmp()
+        sendIcmp()
         time.sleep(1)
 
     time.sleep(1)
 
     # test 4
     for i in range(10):
-        send_icmp6()
+        sendIcmp6()
         time.sleep(1)
 
     time.sleep(1)
 
     # test 5
     for i in range(10):
-        send_tcp("TCP")
+        sendTcp("TCP")
         time.sleep(0.5)
-    send_tcp("exit")
+    sendTcp("exit")
 
     time.sleep(1)
 
     # test 6
     for i in range(10):
-        send_udp("UDP")
+        sendUdp("UDP")
         time.sleep(0.5)
-    send_udp("exit")
+    sendUdp("exit")
 
     time.sleep(1)
 
     # test 7
     for i in range(10):
-        send_icmp()
+        sendIcmp()
         time.sleep(0.5)
 
     time.sleep(1)
 
     # test 8
     for i in range(10):
-        send_icmp6()
+        sendIcmp6()
         time.sleep(0.5)
     
