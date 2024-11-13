@@ -27,5 +27,5 @@ $(TARGET): $(OBJS)
 pack: clean
 	tar --exclude='.vscode' --exclude='.git' --exclude='.gitignore' -cf xfindr01.tar *
 
-test:
+test: clean $(TARGET)
 	sudo ./test/test.sh

@@ -8,12 +8,6 @@
 
 echo "NOTE: program may need to be run as root to access the network interface"
 
-# clean the build directory
-make clean
-
-# build the program
-make
-
 # check if the build succeeded
 if [ $? -eq 0 ]; then
     printf "\e[32mBuild succeeded\e[0m\n"
