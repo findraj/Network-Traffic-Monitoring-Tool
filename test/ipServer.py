@@ -9,6 +9,7 @@ UDP_PORT = 12346
 # TCP Server
 def start_tcp_server():
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     tcp_socket.bind((SERVER_IP, TCP_PORT))
     tcp_socket.listen(1)
     print(f"TCP Server listening on {SERVER_IP}:{TCP_PORT}")
@@ -20,6 +21,7 @@ def start_tcp_server():
         client_socket.close()
         if data == "exit":
             break
+    tcp_socket.close()
 
 # UDP Server
 def start_udp_server():
@@ -32,6 +34,7 @@ def start_udp_server():
         print(f"Received UDP message from {address}")
         if data.decode() == "exit":
             break
+    udp_socket.close()
 
 # ICMP Server
 def start_icmp_server():
@@ -43,8 +46,9 @@ def start_icmp_server():
         data, address = icmp_socket.recvfrom(1024)
         print(f"Received ICMP message from {address}")
         i += 1
-        if i > 20:
+        if i > 10:
             break
+    icmp_socket.close()
 
 # ICMPv6 Server
 def start_icmp6_server():
@@ -56,8 +60,9 @@ def start_icmp6_server():
         data, address = icmp6_socket.recvfrom(1024)
         print(f"Received ICMPv6 message from {address}")
         i += 1
-        if i > 20:
+        if i > 10:
             break
+    icmp6_socket.close()
 
 # Start servers
 if __name__ == "__main__":
@@ -73,3 +78,14 @@ if __name__ == "__main__":
     # test 4
     start_icmp6_server()
 
+    # test 5
+    start_tcp_server()
+
+    # test 6
+    start_udp_server()
+
+    # test 7
+    start_icmp_server()
+
+    # test 8
+    start_icmp6_server()

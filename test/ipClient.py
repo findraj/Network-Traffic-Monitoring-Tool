@@ -24,6 +24,7 @@ def send_udp(message):
     udp_socket.sendto(message.encode(), (SERVER_IP, UDP_PORT))
     response, _ = udp_socket.recvfrom(1024)
     print("UDP Response:", response.decode())
+    udp_socket.close()
 
 # ICMP Client
 def send_icmp():
@@ -31,6 +32,7 @@ def send_icmp():
     icmp_packet = b'\x08\x00\xf7\xff' + b'\x00' * 60  # Simple echo request
     icmp_socket.sendto(icmp_packet, (SERVER_IP, 0))
     print("ICMP Message Sent")
+    icmp_socket.close()
 
 # ICMPv6 Client
 def send_icmp6():
@@ -38,11 +40,12 @@ def send_icmp6():
     icmp6_packet = b'\x80\x00\xf7\xff' + b'\x00' * 60  # Simple ICMPv6 echo request
     icmp6_socket.sendto(icmp6_packet, ('::1', 0))  # IPv6 localhost
     print("ICMPv6 Message Sent")
+    icmp6_socket.close()
 
 # Run Clients
 if __name__ == "__main__":
     # test 1
-    for i in range(20):
+    for i in range(10):
         send_tcp("TCP")
         time.sleep(1)
     send_tcp("exit")
@@ -50,7 +53,7 @@ if __name__ == "__main__":
     time.sleep(1)
 
     # test 2
-    for i in range(20):
+    for i in range(10):
         send_udp("UDP")
         time.sleep(1)
     send_udp("exit")
@@ -58,13 +61,44 @@ if __name__ == "__main__":
     time.sleep(1)
     
     # test 3
-    for i in range(20):
+    for i in range(10):
         send_icmp()
         time.sleep(1)
 
     time.sleep(1)
 
     # test 4
-    for i in range(20):
+    for i in range(10):
         send_icmp6()
         time.sleep(1)
+
+    time.sleep(1)
+
+    # test 5
+    for i in range(10):
+        send_tcp("TCP")
+        time.sleep(0.5)
+    send_tcp("exit")
+
+    time.sleep(1)
+
+    # test 6
+    for i in range(10):
+        send_udp("UDP")
+        time.sleep(0.5)
+    send_udp("exit")
+
+    time.sleep(1)
+
+    # test 7
+    for i in range(10):
+        send_icmp()
+        time.sleep(0.5)
+
+    time.sleep(1)
+
+    # test 8
+    for i in range(10):
+        send_icmp6()
+        time.sleep(0.5)
+    
