@@ -1,37 +1,78 @@
 #!/bin/bash
 
-make
+# make
 
 if [ $? -eq 0 ]; then
-    echo "Build succeeded"
+    echo -e "\e[32mBuild succeeded\e[0m"
 else
-    echo "Build failed"
+    echo -e "\e[31mBuild failed\e[0m"
+    exit 1
 fi
 
 program="./isa-top"
 
 echo "Test 1: No arguments"
-stdout=$($program 2> /dev/null)
-stderr=$($program 2>&1 > /dev/null)
+echo "$program"
+$program
 return_code=$?
 if [ $return_code -eq 1 ]; then
-    echo "Test 1 succeeded"
+    echo -e "\e[32mTest 1 succeeded\e[0m"
 else
-    echo "Test 1 failed"
+    echo -e "\e[31mTest 1 failed\e[0m"
 fi
-echo "stdout: $stdout"
-echo "stderr: $stderr"
+
+echo ""
+
+echo "Test 2: Just -i"
+echo "$program -i"
+$program -i
+return_code=$?
+if [ $return_code -eq 1 ]; then
+    echo -e "\e[32mTest 3 succeeded\e[0m"
+else
+    echo -e "\e[31mTest 3 failed\e[0m"
+fi
+
+echo ""
+
+echo "Test 3: Just -s"
+echo "$program -s"
+$program -s
+return_code=$?
+if [ $return_code -eq 1 ]; then
+    echo -e "\e[32mTest 4 succeeded\e[0m"
+else
+    echo -e "\e[31mTest 4 failed\e[0m"
+fi
+
+echo ""
+
+echo "Test 4: Just -t"
+echo "$program -t"
+$program -t
+return_code=$?
+if [ $return_code -eq 1 ]; then
+    echo -e "\e[32mTest 5 succeeded\e[0m"
+else
+    echo -e "\e[31mTest 5 failed\e[0m"
+fi
+
+echo ""
 
 # command may not work on all systems
-interface=$(ifconfig | grep -B7 "status: active" | awk '/^en/ {print $1}' | head -n 1)
-interface=${interface%:}
+interface=$(ip link show | awk '/state UP/ {print $2}' | sed 's/://; q')
 
-echo "Test 2: Just interface"
-stdout=$($program $interface 2> /dev/null &)
-stderr=$($program $interface 2>&1 > /dev/null &)
+echo "Test 5: Just interface"
+echo "$program -i $interface"
+$program -i "$interface" &
+pid=$!
+kill -9 $pid
+
 return_code=$?
 if [ $return_code -eq 0 ]; then
-    echo "Test 2 succeeded"
+    echo -e "\e[32mTest 2 succeeded\e[0m"
 else
-    echo "Test 2 failed"
+    echo -e "\e[31mTest 2 failed\e[0m"
 fi
+
+echo ""
