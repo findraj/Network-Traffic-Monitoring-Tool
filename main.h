@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <signal.h>
 #include <thread>
+#include <atomic>
+#include <mutex>
 #include "args.h"
 
 /**

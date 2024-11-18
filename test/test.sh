@@ -76,6 +76,18 @@ runTest "Test 12: Arguments: -i interface -t 0" "$program -i $interface -t 0" 1
 runTest "Test 13: Arguments: -i interface -s b -t 10" "$program -i $interface -s b -t 10 &" 0 "kill -9 \$!"
 runTest "Test 14: Arguments: -i interface -s p -t 10" "$program -i $interface -s p -t 10 &" 0 "kill -9 \$!"
 runTest "Test 15: Arguments: -i interface -s a -t 10" "$program -i $interface -s a -t 10" 1
+runTest "Test 16: Arguments: -i interface -s b -t 0" "$program -i $interface -s b -t 0" 1
+runTest "Test 17: Arguments: -i interface -s p -t 0" "$program -i $interface -s p -t 0" 1
+runTest "Test 18: Arguments: -s b -i interface" "$program -s b -i $interface &" 0 "kill -9 \$!"
+runTest "Test 19: Arguments: -s p -i interface" "$program -s p -i $interface &" 0 "kill -9 \$!"
+runTest "Test 20: Arguments: -s a -i interface" "$program -s a -i $interface" 1
+runTest "Test 21: Arguments: -t 10 -i interface" "$program -t 10 -i $interface &" 0 "kill -9 \$!"
+runTest "Test 22: Arguments: -t 0 -i interface" "$program -t 0 -i $interface" 1
+runTest "Test 23: Arguments: -s b -t 10 -i interface" "$program -s b -t 10 -i $interface &" 0 "kill -9 \$!"
+runTest "Test 24: Arguments: -s p -t 10 -i interface" "$program -s p -t 10 -i $interface &" 0 "kill -9 \$!"
+runTest "Test 25: Arguments: -s a -t 10 -i interface" "$program -s a -t 10 -i $interface" 1
+runTest "Test 26: Arguments: -s b -t 0 -i interface" "$program -s b -t 0 -i $interface" 1
+runTest "Test 27: Arguments: -s p -t 0 -i interface" "$program -s p -t 0 -i $interface" 1
 
 printf "\e[32mTests succeeded: %d\e[0m\n" "$successCounter"
 printf "\e[31mTests failed: %d\e[0m\n" "$failCounter"

@@ -13,7 +13,8 @@ map<string, connection> connections;  // map of connections
 vector<connection> sortedConnections; // vector of 10 most active connections
 args arguments;
 pcap_t *handle;
-bool running = true;
+atomic<bool> running(true);
+mutex mtx;
 
 void signalHandler(int signum)
 {
@@ -30,7 +31,10 @@ void screenHandler()
     {
         auto start = chrono::high_resolution_clock::now(); // start time measuring
 
-        sortedConnections = sortConnections(&connections, arguments.bytes, arguments.period); // sort connections and return 10 most active
+        {                                                                                         // scope for the lock_guard to unlock the mutex after the block
+            lock_guard<mutex> lock(mtx);                                                          // lock the mutex
+            sortedConnections = sortConnections(&connections, arguments.bytes, arguments.period); // sort connections and return 10 most active
+        }
         printScreen(&sortedConnections);
 
         auto end = chrono::high_resolution_clock::now();                          // end time measuring
@@ -43,8 +47,11 @@ void screenHandler()
 
 void pHandler(u_char *userData, const struct pcap_pkthdr *pkthdr, const u_char *packet)
 {
-    packetHandler(pkthdr, packet, &connections); // handle the packet and update map of connections
-    (void)userData;                              // suppress unused variable warning
+    {                                                // scope for the lock_guard to unlock the mutex after the block
+        lock_guard<mutex> lock(mtx);                 // lock the mutex
+        packetHandler(pkthdr, packet, &connections); // handle the packet and update map of connections
+    }
+    (void)userData; // suppress unused variable warning
 }
 
 int main(int argc, char *argv[])
