@@ -129,7 +129,7 @@ sudo ./test/test.sh
 
 ## Author
 
-- **Ján Findra** (<xfindr01@stud.fit.vutbr.cz>)
+- **Ján Findra** (<xfindr01 AT stud.fit.vutbr.cz>)
 
 ## License
 
